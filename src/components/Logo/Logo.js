@@ -2,6 +2,15 @@ import React from "react";
 import styled from "styled-components";
 import propTypes from "prop-types";
 
+function Logo({ size, text }) {
+  return (
+    <LogoLayout size={size}>
+      <img src="/images/logo.png" alt="스피치 메이트 로고" />
+      <span>{text}</span>
+    </LogoLayout>
+  );
+}
+
 const LogoLayout = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,15 +26,6 @@ const LogoLayout = styled.div`
     font-weight: ${(props) => props.size.weight};
   }
 `;
-
-function Logo({ size, text }) {
-  return (
-    <LogoLayout size={size}>
-      <img src="/images/logo.png" />
-      <span>{text}</span>
-    </LogoLayout>
-  );
-}
 
 Logo.defaultProps = {
   size: { width: "350px", height: "270px", font: "40px", weight: "bold" },
