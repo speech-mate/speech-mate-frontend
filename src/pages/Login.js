@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
-import Logo from "../components/Logo/Logo";
+import Logo from "../components/Logo";
 
+import useAuth from "../hooks/useAuth";
 import useKapi from "../hooks/useKapi";
 import { userLogin } from "../api/auth";
 
@@ -11,7 +13,11 @@ const REVOKE_AUTH_URL = "/v1/user/unlink";
 
 function Login() {
   const [error, setError] = useState("");
+  const { setAuth } = useAuth();
   const kapi = useKapi();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   useEffect(() => {
     if (!kapi) return;
@@ -47,8 +53,20 @@ function Login() {
 
           try {
             const response = await userLogin(kakaoAccount);
-            const { userInfo } = response.data;
-            console.log(userInfo);
+            const {
+              userInfo: { _id: id, nickname, email, photo, files },
+              accessToken,
+            } = response.data;
+            setAuth({
+              user: {
+                id,
+                nickname,
+                email,
+                photo,
+              },
+              accessToken,
+            });
+            navigate(from, { replace: true });
           } catch (error) {
             console.error(error);
           }
@@ -89,7 +107,7 @@ const LogoBox = styled.div`
   position: relative;
   top: 50%;
   left: 50%;
-  transform: translate(-55%, -70%);
+  transform: translate(-50%, -70%);
 `;
 
 const LoginButton = styled.div`
