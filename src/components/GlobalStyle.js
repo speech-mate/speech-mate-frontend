@@ -7,7 +7,7 @@ const GlobalStyle = createGlobalStyle`
   :root {
     --magnolia-color: #F4EEFF;
     --pale-lavender-color: #DCD6F7;
-    --maximum-blue-purple-color: #F4EEFF;
+    --maximum-blue-purple-color: #A6B1E1;
     --independence-color: #424874;
   }
 
