@@ -25,7 +25,12 @@ ReactDOM.render(
               <Route path="/" element={<Main />} />
             </Route>
 
-            <Route path="*" element={<Error />} />
+            <Route
+              path="*"
+              element={
+                <Error error={{ code: 404, message: "Page Not Found" }} />
+              }
+            />
           </Route>
         </Routes>
       </AuthProvider>
