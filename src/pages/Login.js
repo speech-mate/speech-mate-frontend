@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import Logo from "../components/Logo";
@@ -25,7 +25,6 @@ function Login() {
     kapi.Auth.createLoginButton({
       container: "#kakao-login-btn",
       scope: "profile_nickname, profile_image, account_email",
-      persistAccessToken: false,
       success: responseKakao,
       fail: () => {
         setError("로그인 실패. 잠시 후 다시 시도해 주세요.");
@@ -41,9 +40,6 @@ function Login() {
           if (kakaoAccount.email_needs_agreement) {
             kapi.API.request({
               url: REVOKE_AUTH_URL,
-              success: function (response) {
-                console.log(response);
-              },
             });
             setError(
               "서비스 이용을 위하여 필수정보와 선택정보인 이메일을 모두 동의 해주세요.",
