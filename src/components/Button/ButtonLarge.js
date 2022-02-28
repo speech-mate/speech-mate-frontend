@@ -2,13 +2,17 @@ import React from "react";
 import styled from "styled-components";
 import propTypes from "prop-types";
 
-function ButtonLarge({ text, onClick }) {
-  return <LargeButton onClick={onClick}>{text}</LargeButton>;
+function ButtonLarge({ text, onClick, node }) {
+  return (
+    <LargeButton onClick={onClick} data-node={node}>
+      {text}
+    </LargeButton>
+  );
 }
 
 const LargeButton = styled.button`
   width: 90%;
-  height: 65px;
+  height: 60px;
   border: none;
   border-radius: 10px;
   background-color: var(--maximum-blue-purple-color);
@@ -19,6 +23,7 @@ const LargeButton = styled.button`
 ButtonLarge.propTypes = {
   text: propTypes.string.isRequired,
   onClick: propTypes.func.isRequired,
+  node: propTypes.node,
 };
 
 export default ButtonLarge;

@@ -7,6 +7,7 @@ import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
 import Login from "./pages/Login";
 import Main from "./pages/Main";
+import NewPractice from "./pages/NewPractice";
 import Error from "./pages/Error";
 import { AuthProvider } from "./context/AuthProvider";
 
@@ -23,6 +24,7 @@ ReactDOM.render(
 
             <Route element={<RequireAuth />}>
               <Route path="/" element={<Main />} />
+              <Route path="practice/new" element={<NewPractice />} />
             </Route>
 
             <Route

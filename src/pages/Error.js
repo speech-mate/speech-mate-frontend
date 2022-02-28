@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import propTypes from "prop-types";
 
-import Logo from "../components/Logo";
-import ButtonLarge from "../components/ButtonLarge";
+import Logo from "../components/Logo/Logo";
+import ButtonLarge from "../components/Button/ButtonLarge";
 
 function Error({ error }) {
   const navigate = useNavigate();
@@ -36,21 +36,18 @@ const ErrorLayout = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: inherit;
+  width: 100%;
   height: inherit;
-  color: white;
 
   button {
-    position: absolute;
-    bottom: 10%;
+    position: relative;
+    top: 50.5%;
   }
 `;
 
 const LogoBox = styled.div`
   position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -70%);
+  top: 25%;
 `;
 
 Error.propTypes = {
