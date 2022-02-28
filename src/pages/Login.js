@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
-import Logo from "../components/Logo";
+import Logo from "../components/Logo/Logo";
 
 import useAuth from "../hooks/useAuth";
 import useKapi from "../hooks/useKapi";
@@ -86,9 +86,8 @@ const LoginLayout = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: inherit;
+  width: 100%;
   height: inherit;
-  color: white;
 
   p {
     position: absolute;
@@ -101,14 +100,12 @@ const LoginLayout = styled.div`
 
 const LogoBox = styled.div`
   position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -70%);
+  top: 20%;
 `;
 
 const LoginButton = styled.div`
   position: relative;
-  top: 45%;
+  top: 48%;
   display: flex;
   justify-content: center;
 

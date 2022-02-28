@@ -2,8 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import Logo from "../components/Logo";
-import ButtonLarge from "../components/ButtonLarge";
+import Logo from "../components/Logo/Logo";
+import ButtonLarge from "../components/Button/ButtonLarge";
 
 import useAuth from "../hooks/useAuth";
 import useKapi from "../hooks/useKapi";
@@ -63,7 +63,6 @@ const MainLayout = styled.div`
   align-items: center;
   width: 100%;
   height: inherit;
-  color: white;
 `;
 
 const MainHeader = styled.header`
@@ -71,7 +70,7 @@ const MainHeader = styled.header`
   justify-content: space-between;
   align-items: center;
   width: inherit;
-  margin-top: 15px;
+  height: 70px;
 
   i {
     margin-right: 20px;
@@ -113,8 +112,8 @@ const ButtonBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: absolute;
-  bottom: 10%;
+  position: relative;
+  top: 50.5%;
   width: inherit;
 
   button {
