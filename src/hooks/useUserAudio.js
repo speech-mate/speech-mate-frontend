@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function useUserAudio() {
+function useUserAudio() {
   const [audioStream, setAudioStream] = useState(null);
   const navigate = useNavigate();
 
@@ -9,7 +9,12 @@ export function useUserAudio() {
     async function enableAudioStream() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
+          audio: {
+            echoCancellation: true,
+            autoGainControl: false,
+            noiseSuppression: false,
+            latency: 0,
+          },
         });
         setAudioStream(stream);
       } catch (err) {
@@ -30,3 +35,5 @@ export function useUserAudio() {
 
   return audioStream;
 }
+
+export default useUserAudio;

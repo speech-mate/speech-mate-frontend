@@ -2,9 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import propTypes from "prop-types";
 
-function ButtonLarge({ text, onClick, node }) {
+function ButtonLarge({ text, onClick, node, disabled }) {
   return (
-    <LargeButton onClick={onClick} data-node={node}>
+    <LargeButton onClick={onClick} data-node={node} disabled={disabled}>
       {text}
     </LargeButton>
   );
@@ -24,6 +24,7 @@ ButtonLarge.propTypes = {
   text: propTypes.string.isRequired,
   onClick: propTypes.func.isRequired,
   node: propTypes.node,
+  disabled: propTypes.bool,
 };
 
 export default ButtonLarge;
