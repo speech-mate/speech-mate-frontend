@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
     --maximum-blue-purple-color: #A6B1E1;
     --independence-color: #424874;
     --ice-grey-color: #C1C7CC;
+    --dark-grey-blue-color: #424952;
   }
 
   html {

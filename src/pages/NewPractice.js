@@ -8,7 +8,6 @@ import ButtonLarge from "../components/Button/ButtonLarge";
 import Logo from "../components/Logo/Logo";
 
 import { STEP, TEXT_CONTENTS, SELECTIONS } from "../constants/newPractice";
-import { detectPitch } from "../api/voice";
 import Microphone from "../components/Microphone/Microphone";
 
 function NewPractice() {
@@ -84,7 +83,11 @@ function NewPractice() {
           <span>{count}</span>
           {isMicOn && <Microphone setUserPitch={setUserPitch} />}
           {!userPitch ? (
-            <ButtonLarge text={SELECTIONS.TWO[0]} onClick={getUserPitch} />
+            <ButtonLarge
+              text={SELECTIONS.TWO[0]}
+              onClick={getUserPitch}
+              disabled={isMicOn}
+            />
           ) : (
             <ButtonLarge
               text={SELECTIONS.TWO[1]}
@@ -167,6 +170,11 @@ const StepTwoBox = styled.div`
   button {
     position: relative;
     top: 26.2%;
+  }
+
+  button:disabled {
+    background-color: var(--ice-grey-color);
+    color: var(--dark-grey-blue-color);
   }
 `;
 
