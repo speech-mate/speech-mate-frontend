@@ -5,28 +5,14 @@ import useUserAudio from "../../hooks/useUserAudio";
 import useInterval from "../../hooks/useInterval";
 import { getAudioContext, getAnalyser } from "../../api/audio";
 import autoCorrelate from "../../util/autoCorrelate";
+import { STEP } from "../../constants/newPractice";
+import { findClosestNote } from "../../util/helpers";
 
-const noteStrings = [
-  "C",
-  "C#",
-  "D",
-  "D#",
-  "E",
-  "F",
-  "F#",
-  "G",
-  "G#",
-  "A",
-  "A#",
-  "B",
-];
-
-function Microphone({ setUserPitch }) {
+function Microphone({ time, setUserPitch, mode }) {
   const [source, setSource] = useState(null);
-  const [pitchNote, setPitchNote] = useState("C");
-  const [pitchScale, setPitchScale] = useState("4");
-  const [pitch, setPitch] = useState("0 Hz");
-  const [detune, setDetune] = useState("0");
+  const [onAnalyse, setOnAnalyse] = useState(false);
+  const [count, setCount] = useState(0);
+  const [pitches, setPitches] = useState([]);
 
   const audioStream = useUserAudio();
   const audioCtx = getAudioContext();
@@ -34,11 +20,16 @@ function Microphone({ setUserPitch }) {
   const bufferLength = 2048;
   const buffer = new Float32Array(bufferLength);
 
-  const updatePitch = () => {
+  function recordPitch() {
     analyserNode.getFloatTimeDomainData(buffer);
     const fundamentalFrequency = autoCorrelate(buffer, audioCtx.sampleRate);
     if (!fundamentalFrequency) return;
-  };
+    setPitches([...pitches, fundamentalFrequency]);
+  }
+
+  function countDown() {
+    setCount((prev) => (prev === 0 ? setOnAnalyse(false) : prev - 1));
+  }
 
   useEffect(async () => {
     if (!audioStream) return;
@@ -54,23 +45,25 @@ function Microphone({ setUserPitch }) {
     if (!source) return;
 
     source.connect(analyserNode);
+    setOnAnalyse(true);
+    setCount(time);
 
     return () => {
       source.disconnect(analyserNode);
     };
   }, [source]);
 
-  useInterval(updatePitch, 1);
+  useEffect(() => {
+    if (!pitches.length) return;
 
-  return (
-    <MicrophoneLayout>
-      <span>
-        {pitchNote}
-        {pitchScale}
-      </span>
-      <span>{pitch}</span>
-    </MicrophoneLayout>
-  );
+    const closestNote = findClosestNote(pitches);
+    setUserPitch(closestNote);
+  }, [onAnalyse]);
+
+  useInterval(mode === STEP.TWO && recordPitch, onAnalyse ? 1 : null);
+  useInterval(countDown, onAnalyse ? 1000 : null);
+
+  return <MicrophoneLayout>{count}</MicrophoneLayout>;
 }
 
 const MicrophoneLayout = styled.div`
@@ -78,7 +71,9 @@ const MicrophoneLayout = styled.div`
 `;
 
 Microphone.propTypes = {
+  time: propTypes.number,
   setUserPitch: propTypes.func,
+  mode: propTypes.string,
 };
 
 export default Microphone;

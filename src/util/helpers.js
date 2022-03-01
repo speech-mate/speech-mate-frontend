@@ -1,3 +1,5 @@
+import { NOTES } from "../constants/newPractice";
+
 // Find the biggest value in a buffer, set that value to 1.0,
 // and scale every other value by the same amount.
 export function normalize(data) {
@@ -32,4 +34,28 @@ export function findFrequency(autocorr, sampleRate) {
   const fundamentalFrequency = sampleRate / distanceToNextLargestPeak;
 
   return fundamentalFrequency;
+}
+
+export function findClosestNote(freqArr) {
+  const avgFreqency =
+    freqArr.reduce((pre, curr) => pre + curr) / freqArr.length;
+  let low = -1;
+  let high = NOTES.length;
+
+  while (high - low > 1) {
+    const pivot = Math.round((low + high) / 2);
+    if (NOTES[pivot].frequency <= avgFreqency) {
+      low = pivot;
+    } else {
+      high = pivot;
+    }
+  }
+
+  if (
+    Math.abs(NOTES[high].frequency - avgFreqency) <=
+    Math.abs(NOTES[low].frequency - avgFreqency)
+  )
+    return NOTES[high];
+
+  return NOTES[low];
 }

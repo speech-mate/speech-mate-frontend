@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { nanoid } from "nanoid";
@@ -13,9 +13,9 @@ import Microphone from "../components/Microphone/Microphone";
 function NewPractice() {
   const [step, setStep] = useState(STEP.ONE);
   const [selectedNode, setSelectedNode] = useState("");
-  const [count, setCount] = useState(5);
+  // const [count, setCount] = useState(5);
   const [isMicOn, setIsMicOn] = useState(false);
-  const [userPitch, setUserPitch] = useState("");
+  const [userPitch, setUserPitch] = useState(null);
   const navigate = useNavigate();
 
   function toMainPage() {
@@ -40,15 +40,18 @@ function NewPractice() {
 
   function getUserPitch() {
     setIsMicOn(true);
-
-    setTimeout(() => {
-      setIsMicOn(false);
-    }, 5000);
   }
 
   function onStepTwoSelection() {
     setStep(STEP.THREE);
   }
+
+  useEffect(() => {
+    if (!userPitch) return;
+
+    console.log(userPitch);
+    setIsMicOn(false);
+  }, [userPitch]);
 
   return (
     <NewPracticeLayout>
@@ -80,8 +83,9 @@ function NewPractice() {
           <LogoBox>
             <Logo />
           </LogoBox>
-          <span>{count}</span>
-          {isMicOn && <Microphone setUserPitch={setUserPitch} />}
+          {isMicOn && (
+            <Microphone time={5} setUserPitch={setUserPitch} mode={STEP.TWO} />
+          )}
           {!userPitch ? (
             <ButtonLarge
               text={SELECTIONS.TWO[0]}
@@ -169,7 +173,7 @@ const StepTwoBox = styled.div`
 
   button {
     position: relative;
-    top: 26.2%;
+    top: 31.8%;
   }
 
   button:disabled {
