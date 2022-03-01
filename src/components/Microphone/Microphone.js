@@ -36,20 +36,8 @@ function Microphone({ setUserPitch }) {
 
   const updatePitch = () => {
     analyserNode.getFloatTimeDomainData(buffer);
-    const ac = autoCorrelate(buffer, audioCtx.sampleRate);
-    // var ac = autoCorrelate(buf, audioCtx.sampleRate);
-    // if (ac > -1) {
-    //   let note = noteFromPitch(ac);
-    //   let sym = noteStrings[note % 12];
-    //   let scl = Math.floor(note / 12) - 1;
-    //   let dtune = centsOffFromPitch(ac, note);
-    //   setPitch(parseFloat(ac).toFixed(2) + " Hz");
-    //   setPitchNote(sym);
-    //   setPitchScale(scl);
-    //   setDetune(dtune);
-    //   setNotification(false);
-    //   console.log(note, sym, scl, dtune, ac);
-    // }
+    const fundamentalFrequency = autoCorrelate(buffer, audioCtx.sampleRate);
+    if (!fundamentalFrequency) return;
   };
 
   useEffect(async () => {
