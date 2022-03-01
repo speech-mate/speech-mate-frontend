@@ -41,3 +41,126 @@ export const SELECTIONS = {
   ],
   TWO: ["목소리 샘플 녹음하기", "스피치 설정 페이지로"],
 };
+
+export const NOTES = [
+  {
+    note: "E",
+    frequency: 82.41,
+    octave: 2,
+  },
+  {
+    note: "F",
+    frequency: 87.31,
+    octave: 2,
+  },
+  {
+    note: "F#",
+    frequency: 92.5,
+    octave: 2,
+  },
+  {
+    note: "G",
+    frequency: 98.0,
+    octave: 2,
+  },
+  {
+    note: "G#",
+    frequency: 103.8,
+    octave: 2,
+  },
+  {
+    note: "A",
+    frequency: 110.0,
+    octave: 2,
+  },
+  {
+    note: "A#",
+    frequency: 116.5,
+    octave: 2,
+  },
+  {
+    note: "B",
+    frequency: 123.5,
+    octave: 2,
+  },
+  {
+    note: "C",
+    frequency: 130.8,
+    octave: 3,
+  },
+  {
+    note: "C#",
+    frequency: 138.6,
+    octave: 3,
+  },
+  {
+    note: "D",
+    frequency: 146.8,
+    octave: 3,
+  },
+  {
+    note: "D#",
+    frequency: 156.6,
+    octave: 3,
+  },
+  {
+    note: "E",
+    frequency: 164.8,
+    octave: 3,
+  },
+  {
+    note: "F",
+    frequency: 174.6,
+    octave: 3,
+  },
+  {
+    note: "F#",
+    frequency: 185.0,
+    octave: 3,
+  },
+  {
+    note: "G",
+    frequency: 196.0,
+    octave: 3,
+  },
+  {
+    note: "G#",
+    frequency: 207.7,
+    octave: 3,
+  },
+  {
+    note: "A",
+    frequency: 220.0,
+    octave: 3,
+  },
+  {
+    note: "A#",
+    frequency: 233.1,
+    octave: 3,
+  },
+  {
+    note: "B",
+    frequency: 246.9,
+    octave: 3,
+  },
+  {
+    note: "C",
+    frequency: 261.6,
+    octave: 4,
+  },
+  {
+    note: "C#",
+    frequency: 272.2,
+    octave: 4,
+  },
+  {
+    note: "D",
+    frequency: 293.7,
+    octave: 4,
+  },
+  {
+    note: "D#",
+    frequency: 311.1,
+    octave: 4,
+  },
+];
