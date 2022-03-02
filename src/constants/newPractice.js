@@ -2,6 +2,7 @@ export const STEP = {
   ONE: "selectSpeechTone",
   TWO: "getUserPitch",
   THREE: "inputSpeechSettings",
+  FOUR: "recordSpeech",
 };
 
 export const TEXT_CONTENTS = {
@@ -20,23 +21,23 @@ export const SELECTIONS = {
   ONE: [
     {
       TEXT: "도 - 위로, 힘든 일 말할 때",
-      NODE: "C",
+      NOTE: "C",
     },
     {
       TEXT: "레 - 회의, 보고, 제안, 권유",
-      NODE: "D",
+      NOTE: "D",
     },
     {
       TEXT: "미 - 일상 대화",
-      NODE: "E",
+      NOTE: "E",
     },
     {
       TEXT: "파 - 연설, 프레젠테이션 주장 강조",
-      NODE: "F",
+      NOTE: "F",
     },
     {
       TEXT: "솔 - 인사, 칭찬, 감사",
-      NODE: "G",
+      NOTE: "G",
     },
   ],
   TWO: ["목소리 샘플 녹음하기", "스피치 설정 페이지로"],

@@ -37,7 +37,14 @@ const GlobalStyle = createGlobalStyle`
     ::-webkit-scrollbar {
       display: none;
     }
+    
+    input::-webkit-inner-spin-button { 
+      appearance: none;
+      -moz-appearance: none; 
+      -webkit-appearance: none; 
+    }
   }
+
 
   #root {
     height: 100%;
