@@ -57,6 +57,7 @@ function Microphone({ time, setUserPitch, mode }) {
     if (!pitches.length) return;
 
     const closestNote = findClosestNote(pitches);
+    console.log(closestNote);
     setUserPitch(closestNote);
   }, [onAnalyse]);
 
