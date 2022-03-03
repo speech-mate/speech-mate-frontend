@@ -44,7 +44,7 @@ export function findClosestNote(freqArr) {
 
   while (high - low > 1) {
     const pivot = Math.round((low + high) / 2);
-    if (NOTES[pivot].frequency <= avgFreqency) {
+    if (NOTES[pivot]?.frequency <= avgFreqency) {
       low = pivot;
     } else {
       high = pivot;
@@ -52,8 +52,8 @@ export function findClosestNote(freqArr) {
   }
 
   if (
-    Math.abs(NOTES[high].frequency - avgFreqency) <=
-    Math.abs(NOTES[low].frequency - avgFreqency)
+    Math.abs(NOTES[high]?.frequency - avgFreqency) <=
+    Math.abs(NOTES[low]?.frequency - avgFreqency)
   )
     return NOTES[high];
 
