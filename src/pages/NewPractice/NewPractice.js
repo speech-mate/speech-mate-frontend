@@ -10,14 +10,15 @@ import StepFour from "./StepFour";
 
 import { STEP } from "../../constants/newPractice";
 import { NewPracticeLayout } from "./NewPracticeStyles";
+import useMic from "../../hooks/useMic";
 
 function NewPractice({ recorderState, handlers }) {
   const [step, setStep] = useState(STEP.ONE);
   const [selectedNote, setSelectedNote] = useState("");
-  const [isMicOn, setIsMicOn] = useState(false);
   const [userPitch, setUserPitch] = useState(null);
   const [theme, setTheme] = useState("");
   const [subThemes, setSubThemes] = useState([]);
+  const { micState, ...micHandlers } = useMic();
   const navigate = useNavigate();
 
   function toMainPage() {
@@ -26,6 +27,9 @@ function NewPractice({ recorderState, handlers }) {
 
   function toPrevStep() {
     if (step === STEP.TWO) {
+      if (micState.initMic) {
+        micHandlers.cancelMic();
+      }
       setStep(STEP.ONE);
     }
 
@@ -47,19 +51,9 @@ function NewPractice({ recorderState, handlers }) {
     setStep(STEP.TWO);
   }
 
-  function getUserPitch() {
-    setIsMicOn(true);
-  }
-
   function onStepTwoSelection() {
     setStep(STEP.THREE);
   }
-
-  useEffect(() => {
-    if (!userPitch) return;
-
-    setIsMicOn(false);
-  }, [userPitch]);
 
   return (
     <NewPracticeLayout>
@@ -68,10 +62,10 @@ function NewPractice({ recorderState, handlers }) {
       {step === STEP.TWO && (
         <StepTwo
           onStepTwoSelection={onStepTwoSelection}
-          isMicOn={isMicOn}
           setUserPitch={setUserPitch}
-          getUserPitch={getUserPitch}
           userPitch={userPitch}
+          micState={micState}
+          micHandlers={micHandlers}
         />
       )}
       {step === STEP.THREE && (

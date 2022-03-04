@@ -8,7 +8,7 @@ import Error from "./pages/Error";
 import Login from "./pages/Login";
 import Main from "./pages/Main";
 import NewPractice from "./pages/NewPractice/NewPractice";
-import Review from "./pages/Review";
+import Review from "./pages/Review/Review";
 
 import useRecorder from "./hooks/useRecorder";
 

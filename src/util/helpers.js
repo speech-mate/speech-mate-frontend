@@ -59,3 +59,25 @@ export function findClosestNote(freqArr) {
 
   return NOTES[low];
 }
+
+export function findClosestNote2(freq) {
+  let low = -1;
+  let high = NOTES.length;
+
+  while (high - low > 1) {
+    const pivot = Math.round((low + high) / 2);
+    if (NOTES[pivot]?.frequency <= freq) {
+      low = pivot;
+    } else {
+      high = pivot;
+    }
+  }
+
+  if (
+    Math.abs(NOTES[high]?.frequency - freq) <=
+    Math.abs(NOTES[low]?.frequency - freq)
+  )
+    return NOTES[high];
+
+  return NOTES[low];
+}
