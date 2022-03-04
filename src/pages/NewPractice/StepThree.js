@@ -125,8 +125,6 @@ function StepThree({
       Number(subThemeSecRef.current.value),
     );
 
-    console.log();
-
     if (convertedSubThemeTime > convertedSpeechTime) {
       return setIsValid({
         ...initialValidationState,

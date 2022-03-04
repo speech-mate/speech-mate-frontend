@@ -11,6 +11,10 @@ import {
 import Keyboard from "../../components/Keyboard/Keyboard";
 import ButtonLarge from "../../components/Button/ButtonLarge";
 import { formatMin, formatSec } from "../../util/formatTime";
+import useInterval from "../../hooks/useInterval";
+import { getAudioContext, getAnalyser } from "../../handlers/audioCtxControls";
+import autoCorrelate from "../../util/autoCorrelate";
+import { findClosestNote2 } from "../../util/helpers";
 
 function StepFour({
   theme,
@@ -20,13 +24,90 @@ function StepFour({
   recorderState,
   handlers,
 }) {
+  const [source, setSource] = useState(null);
   const [currSubTheme, setCurrSubTheme] = useState(null);
+  const [onAnalyse, setOnAnalyse] = useState(false);
+  const [pitches, setPitches] = useState([]);
+  const [pitchStatus, setPitchStatus] = useState({});
   const navigate = useNavigate();
+
+  const audioCtx = getAudioContext();
+  const analyserNode = getAnalyser();
+  const bufferLength = 2048;
+  const buffer = new Float32Array(bufferLength);
 
   function toReview() {
     handlers.saveRecording();
     navigate("/practice/review");
   }
+
+  function recordPitch() {
+    analyserNode.getFloatTimeDomainData(buffer);
+    const fundamentalFrequency = autoCorrelate(buffer, audioCtx.sampleRate);
+    if (!fundamentalFrequency) return;
+    const note = findClosestNote2(fundamentalFrequency);
+    const noteKey = `${note?.octave}${note?.note}`;
+
+    if (note && !pitchStatus[noteKey]) {
+      setPitchStatus((prev) => {
+        return {
+          ...prev,
+          [noteKey]: 1,
+        };
+      });
+    }
+
+    if (note && pitchStatus[noteKey]) {
+      setPitchStatus((prev) => {
+        return {
+          ...prev,
+          [noteKey]: prev[noteKey] + 1,
+        };
+      });
+    }
+    setPitches([...pitches, fundamentalFrequency]);
+  }
+
+  useInterval(recordPitch, onAnalyse ? 1 : null);
+
+  useEffect(() => {
+    if (
+      recorderState.recordingMin !== recorderState.maxRecordingMin &&
+      recorderState.recordingSec !== recorderState.maxRecordingSec
+    )
+      return;
+
+    setOnAnalyse(false);
+  }, [recorderState.recordingMin, recorderState.recordingSec]);
+
+  useEffect(() => {
+    if (!pitches.length) return;
+
+    console.log(pitches);
+    console.log(pitchStatus);
+
+    // speech ton analyse logic needed using pitch detection algorithm
+  }, [onAnalyse]);
+
+  useEffect(async () => {
+    if (!recorderState.mediaStream) return;
+
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
+
+    setSource(audioCtx.createMediaStreamSource(recorderState.mediaStream));
+  }, [recorderState.mediaStream]);
+
+  useEffect(() => {
+    if (!source) return;
+
+    source.connect(analyserNode);
+
+    return () => {
+      source.disconnect(analyserNode);
+    };
+  }, [source]);
 
   useEffect(() => {
     if (!subThemes.length) return;
@@ -77,13 +158,31 @@ function StepFour({
       <Keyboard selectedNote={selectedNote} />
       <ButtonBox>
         {!recorderState.initRecording && (
-          <ButtonLarge text="녹음 시작" onClick={handlers.startRecording} />
+          <ButtonLarge
+            text="녹음 시작"
+            onClick={() => {
+              setOnAnalyse(true);
+              handlers.startRecording();
+            }}
+          />
         )}
         {recorderState.mediaRecorder?.state === "recording" && (
-          <ButtonLarge text="일시 정지" onClick={handlers.pauseRecording} />
+          <ButtonLarge
+            text="일시 정지"
+            onClick={() => {
+              setOnAnalyse(false);
+              handlers.pauseRecording();
+            }}
+          />
         )}
         {recorderState.mediaRecorder?.state === "paused" && (
-          <ButtonLarge text="녹음 재개" onClick={handlers.resumeRecording} />
+          <ButtonLarge
+            text="녹음 재개"
+            onClick={() => {
+              setOnAnalyse(true);
+              handlers.resumeRecording();
+            }}
+          />
         )}
         <ButtonLarge text="종료 및 리뷰하기" onClick={toReview} />
       </ButtonBox>

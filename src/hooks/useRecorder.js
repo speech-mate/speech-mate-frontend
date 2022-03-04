@@ -6,7 +6,7 @@ import {
   pauseRecodring,
   resumeRecodring,
   setMaxRecordingTime,
-} from "../api/record";
+} from "../handlers/recorderControls";
 
 const initialState = {
   maxRecordingMin: 0,

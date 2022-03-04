@@ -47,6 +47,7 @@ export const StepTwoBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
   width: inherit;
   height: inherit;
 
@@ -258,5 +259,18 @@ export const ButtonBox = styled.div`
     &:nth-child(2) {
       margin-top: 20px;
     }
+  }
+`;
+
+export const IndicatorBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  position: absolute;
+  top: 60%;
+
+  span {
+    margin-bottom: 10px;
   }
 `;
