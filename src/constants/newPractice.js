@@ -55,28 +55,13 @@ export const NOTES = [
     octave: 2,
   },
   {
-    note: "F#",
-    frequency: 92.5,
-    octave: 2,
-  },
-  {
     note: "G",
     frequency: 98.0,
     octave: 2,
   },
   {
-    note: "G#",
-    frequency: 103.8,
-    octave: 2,
-  },
-  {
     note: "A",
     frequency: 110.0,
-    octave: 2,
-  },
-  {
-    note: "A#",
-    frequency: 116.5,
     octave: 2,
   },
   {
@@ -90,18 +75,8 @@ export const NOTES = [
     octave: 3,
   },
   {
-    note: "C#",
-    frequency: 138.6,
-    octave: 3,
-  },
-  {
     note: "D",
     frequency: 146.8,
-    octave: 3,
-  },
-  {
-    note: "D#",
-    frequency: 156.6,
     octave: 3,
   },
   {
@@ -115,28 +90,13 @@ export const NOTES = [
     octave: 3,
   },
   {
-    note: "F#",
-    frequency: 185.0,
-    octave: 3,
-  },
-  {
     note: "G",
     frequency: 196.0,
     octave: 3,
   },
   {
-    note: "G#",
-    frequency: 207.7,
-    octave: 3,
-  },
-  {
     note: "A",
     frequency: 220.0,
-    octave: 3,
-  },
-  {
-    note: "A#",
-    frequency: 233.1,
     octave: 3,
   },
   {
@@ -150,18 +110,33 @@ export const NOTES = [
     octave: 4,
   },
   {
-    note: "C#",
-    frequency: 272.2,
-    octave: 4,
-  },
-  {
     note: "D",
     frequency: 293.7,
     octave: 4,
   },
   {
-    note: "D#",
-    frequency: 311.1,
+    note: "E",
+    frequency: 329.6,
+    octave: 4,
+  },
+  {
+    note: "F",
+    frequency: 349.2,
+    octave: 4,
+  },
+  {
+    note: "G",
+    frequency: 392.0,
+    octave: 4,
+  },
+  {
+    note: "A",
+    frequency: 440.0,
+    octave: 4,
+  },
+  {
+    note: "B",
+    frequency: 493.9,
     octave: 4,
   },
 ];

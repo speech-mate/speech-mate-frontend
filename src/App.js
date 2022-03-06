@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Layout from "./components/Layout";
@@ -11,28 +11,44 @@ import NewPractice from "./pages/NewPractice/NewPractice";
 import Review from "./pages/Review/Review";
 
 import useRecorder from "./hooks/useRecorder";
+import useSpeechState from "./hooks/useSpeechState";
 
 function App() {
-  const { recorderState, ...handlers } = useRecorder();
-  const { audio } = recorderState;
+  const [files, setFiles] = useState([]);
+  const { recorderState, ...recorderHandlers } = useRecorder();
+  const { speechState, ...speechHandlers } = useSpeechState();
 
   return (
     <AuthProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="login" element={<Login />} />
+          <Route path="login" element={<Login setFiles={setFiles} />} />
           <Route element={<RequireAuth />}>
             <Route path="/" element={<Main />} />
             <Route
               path="practice/new"
               element={
                 <NewPractice
+                  speechState={speechState}
+                  speechHandlers={speechHandlers}
                   recorderState={recorderState}
-                  handlers={handlers}
+                  recorderHandlers={recorderHandlers}
                 />
               }
             />
-            <Route path="practice/review" element={<Review audio={audio} />} />
+            <Route
+              path="practice/review"
+              element={
+                <Review
+                  files={files}
+                  setFiles={setFiles}
+                  speechState={speechState}
+                  speechHandlers={speechHandlers}
+                  recorderState={recorderState}
+                  recorderHandlers={recorderHandlers}
+                />
+              }
+            />
           </Route>
           <Route
             path="*"

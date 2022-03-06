@@ -28,13 +28,11 @@ const initialValidationState = {
 };
 
 function StepThree({
-  theme,
-  subThemes,
-  setSubThemes,
-  setTheme,
+  speechState,
+  speechHandlers,
   setStep,
   recorderState,
-  handlers,
+  recorderHandlers,
 }) {
   const [isValid, setIsValid] = useState(initialValidationState);
   const speechMinRef = useRef();
@@ -68,11 +66,16 @@ function StepThree({
     const trueIndex = 1;
 
     if (Object.entries(isValid).every((entry) => entry[trueIndex])) {
-      handlers.setMaxRecordingTime(
+      recorderHandlers.setMaxRecordingTime(
         Number(speechMinRef.current.value),
         Number(speechSecRef.current.value),
       );
-      setTheme(speechThemeRef.current.value);
+      speechHandlers.setSpeechState((prev) => {
+        return {
+          ...prev,
+          title: speechThemeRef.current.value,
+        };
+      });
       setStep(STEP.FOUR);
     }
   }
@@ -133,8 +136,10 @@ function StepThree({
     }
 
     if (
-      subThemes.length &&
-      subThemes.find((subTheme) => subTheme.time === convertedSubThemeTime)
+      speechState.subThemes.length &&
+      speechState.subThemes.find(
+        (subTheme) => subTheme.time === convertedSubThemeTime,
+      )
     ) {
       return setIsValid({
         ...initialValidationState,
@@ -143,15 +148,21 @@ function StepThree({
     }
 
     const sortedSubThemes = [
-      ...subThemes,
+      ...speechState.subThemes,
       {
         min: Number(subThemeMinRef.current.value),
         sec: Number(subThemeSecRef.current.value),
         text: subThemeTextRef.current.value,
+        isAchieved: false,
       },
     ].sort((a, b) => convertToSec(a.min, a.sec) - convertToSec(b.min, b.sec));
 
-    setSubThemes(sortedSubThemes);
+    speechHandlers.setSpeechState((prev) => {
+      return {
+        ...prev,
+        subThemes: sortedSubThemes,
+      };
+    });
     setIsValid({ ...initialValidationState });
     subThemeMinRef.current.value = "";
     subThemeSecRef.current.value = "";
@@ -193,7 +204,11 @@ function StepThree({
       <label>
         스피치 주제를 입력해 주세요
         <ThemeBox>
-          <input type="text" defaultValue={theme} ref={speechThemeRef} />
+          <input
+            type="text"
+            defaultValue={speechState.title}
+            ref={speechThemeRef}
+          />
         </ThemeBox>
       </label>
       <ValidationMessage validation={isValid.speechTheme}>
@@ -230,9 +245,9 @@ function StepThree({
       <ValidationMessage validation={isValid.uniqueSubThemeTime}>
         해당 시간에 입력된 소주제가 이미 존재합니다.
       </ValidationMessage>
-      {!!subThemes.length && (
+      {!!speechState.subThemes.length && (
         <SubThemeList>
-          {subThemes.map((subTheme) => {
+          {speechState.subThemes.map((subTheme) => {
             const key = nanoid();
 
             return (
@@ -252,13 +267,11 @@ function StepThree({
 }
 
 StepThree.propTypes = {
-  theme: propTypes.string,
-  subThemes: propTypes.array,
-  setSubThemes: propTypes.func,
-  setTheme: propTypes.func,
+  speechState: propTypes.object,
+  speechHandlers: propTypes.object,
   setStep: propTypes.func,
   recorderState: propTypes.object,
-  handlers: propTypes.object,
+  recorderHandlers: propTypes.object,
 };
 
 export default StepThree;

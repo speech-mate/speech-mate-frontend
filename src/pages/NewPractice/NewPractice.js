@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import propTypes from "prop-types";
 
@@ -12,16 +12,18 @@ import { STEP } from "../../constants/newPractice";
 import { NewPracticeLayout } from "./NewPracticeStyles";
 import useMic from "../../hooks/useMic";
 
-function NewPractice({ recorderState, handlers }) {
+function NewPractice({
+  recorderState,
+  recorderHandlers,
+  speechState,
+  speechHandlers,
+}) {
   const [step, setStep] = useState(STEP.ONE);
-  const [selectedNote, setSelectedNote] = useState("");
-  const [userPitch, setUserPitch] = useState(null);
-  const [theme, setTheme] = useState("");
-  const [subThemes, setSubThemes] = useState([]);
   const { micState, ...micHandlers } = useMic();
   const navigate = useNavigate();
 
   function toMainPage() {
+    speechHandlers.clearSpeech();
     navigate("/");
   }
 
@@ -39,15 +41,47 @@ function NewPractice({ recorderState, handlers }) {
 
     if (step === STEP.FOUR) {
       if (recorderState.initRecording) {
-        handlers.saveRecording();
+        recorderHandlers.saveRecording();
       }
       setStep(STEP.THREE);
     }
   }
 
+  function toNextStep(e) {
+    if (step === STEP.ONE) {
+      const selectedNote = e.target.dataset.note;
+
+      speechHandlers.setSpeechState((prev) => {
+        return {
+          ...prev,
+          speechTone: selectedNote,
+        };
+      });
+      setStep(STEP.TWO);
+    }
+
+    if (step === STEP.TWO) {
+      setStep(STEP.THREE);
+    }
+
+    if (step === STEP.THREE) {
+      setStep(STEP.FOUR);
+    }
+  }
+
   function onStepOneSelection(e) {
-    const selectedNote = e.target.dataset.note;
-    setSelectedNote(selectedNote);
+    const note = e.target.dataset.note;
+    const text = e.target.innerText;
+
+    speechHandlers.setSpeechState((prev) => {
+      return {
+        ...prev,
+        speechTone: {
+          text,
+          note,
+        },
+      };
+    });
     setStep(STEP.TWO);
   }
 
@@ -62,31 +96,27 @@ function NewPractice({ recorderState, handlers }) {
       {step === STEP.TWO && (
         <StepTwo
           onStepTwoSelection={onStepTwoSelection}
-          setUserPitch={setUserPitch}
-          userPitch={userPitch}
+          speechState={speechState}
+          speechHandlers={speechHandlers}
           micState={micState}
           micHandlers={micHandlers}
         />
       )}
       {step === STEP.THREE && (
         <StepThree
-          theme={theme}
-          subThemes={subThemes}
-          setSubThemes={setSubThemes}
-          setTheme={setTheme}
+          speechState={speechState}
+          speechHandlers={speechHandlers}
           setStep={setStep}
           recorderState={recorderState}
-          handlers={handlers}
+          recorderHandlers={recorderHandlers}
         />
       )}
       {step === STEP.FOUR && (
         <StepFour
-          theme={theme}
-          selectedNote={selectedNote}
-          userPitch={userPitch}
-          subThemes={subThemes}
+          speechState={speechState}
+          speechHandlers={speechHandlers}
           recorderState={recorderState}
-          handlers={handlers}
+          recorderHandlers={recorderHandlers}
         />
       )}
     </NewPracticeLayout>
@@ -95,7 +125,9 @@ function NewPractice({ recorderState, handlers }) {
 
 NewPractice.propTypes = {
   recorderState: propTypes.object,
-  handlers: propTypes.object,
+  recorderHandlers: propTypes.object,
+  speechState: propTypes.object,
+  speechHandlers: propTypes.object,
 };
 
 export default NewPractice;

@@ -10,11 +10,15 @@ import { StepTwoBox, LogoBox, IndicatorBox } from "./NewPracticeStyles";
 import { getAudioContext, getAnalyser } from "../../handlers/audioCtxControls";
 import useInterval from "../../hooks/useInterval";
 import autoCorrelate from "../../util/autoCorrelate";
-import { findClosestNote, findClosestNote2 } from "../../util/helpers";
+import { findClosestNote, getNoteRange } from "../../util/helpers";
 
-function StepTwo({ onStepTwoSelection, setUserPitch, micState, micHandlers }) {
+function StepTwo({
+  onStepTwoSelection,
+  speechHandlers,
+  micState,
+  micHandlers,
+}) {
   const [source, setSource] = useState(null);
-  const [pitches, setPitches] = useState([]);
   const [pitchStatus, setPitchStatus] = useState({});
 
   const audioCtx = getAudioContext();
@@ -27,43 +31,41 @@ function StepTwo({ onStepTwoSelection, setUserPitch, micState, micHandlers }) {
     const fundamentalFrequency = autoCorrelate(buffer, audioCtx.sampleRate);
     if (!fundamentalFrequency) return;
 
-    // get note for every frequency
-    const note = findClosestNote2(fundamentalFrequency);
-    const noteKey = `${note?.octave}${note?.note}`;
+    const note = findClosestNote(fundamentalFrequency);
 
-    if (note && !pitchStatus[noteKey]) {
+    if (note && !pitchStatus[note.frequency]) {
       setPitchStatus((prev) => {
         return {
           ...prev,
-          [noteKey]: 1,
+          [note.frequency]: 1,
         };
       });
     }
 
-    if (note && pitchStatus[noteKey]) {
+    if (note && pitchStatus[note.frequency]) {
       setPitchStatus((prev) => {
         return {
           ...prev,
-          [noteKey]: prev[noteKey] + 1,
+          [note.frequency]: prev[note.frequency] + 1,
         };
       });
     }
-
-    // get note for average frequency
-    setPitches([...pitches, fundamentalFrequency]);
   }
 
   useInterval(recordPitch, micState.initMic ? 1 : null);
 
   useEffect(() => {
-    if (micState.count !== 0) return;
+    if (micState.count !== 0 || !Object.keys(pitchStatus).length) return;
 
-    console.log(pitches);
-    console.log(pitchStatus);
+    const noteRange = getNoteRange(pitchStatus);
 
-    const closestNote = findClosestNote(pitches);
-    console.log(closestNote);
-    setUserPitch(closestNote);
+    speechHandlers.setSpeechState((prev) => {
+      return {
+        ...prev,
+        userPitch: noteRange[2],
+        noteRange,
+      };
+    });
   }, [micState.count]);
 
   useEffect(() => {
@@ -98,7 +100,6 @@ function StepTwo({ onStepTwoSelection, setUserPitch, micState, micHandlers }) {
           <Indicator />
         </IndicatorBox>
       )}
-      {/* {isMicOn && <Microphone time={5} setUserPitch={setUserPitch} />} */}
       {micState.count > 0 ? (
         <ButtonLarge
           text={SELECTIONS.TWO[0]}
@@ -114,8 +115,8 @@ function StepTwo({ onStepTwoSelection, setUserPitch, micState, micHandlers }) {
 
 StepTwo.propTypes = {
   onStepTwoSelection: propTypes.func,
-  setUserPitch: propTypes.func,
-  userPitch: propTypes.object,
+  speechState: propTypes.object,
+  speechHandlers: propTypes.object,
   micState: propTypes.object,
   micHandlers: propTypes.object,
 };
