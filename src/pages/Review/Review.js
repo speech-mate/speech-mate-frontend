@@ -13,6 +13,7 @@ import useAuth from "../../hooks/useAuth";
 
 import axios from "../../api/axios";
 import { formatMin, formatSec } from "../../util/formatTime";
+import { CLOSING_TEXT, TIP_TEXT } from "../../constants/review";
 
 function Review({
   files,
@@ -23,8 +24,10 @@ function Review({
   speechHandlers,
 }) {
   const [onModal, setOnModal] = useState(false);
+  const [modalType, setModalType] = useState(null);
   const [isModified, setIsModified] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [dominantNote, setDominantNote] = useState(null);
   const { auth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,6 +36,7 @@ function Review({
 
   function onReturnBtnClick() {
     if (recorderState.audio && !isSaved) {
+      setModalType("confirm");
       return setOnModal(true);
     }
     navigate(from ? from : "/");
@@ -54,20 +58,34 @@ function Review({
     formData.append("userPitch", JSON.stringify(speechState.userPitch));
     formData.append("selectedTone", JSON.stringify(speechState.speechTone));
 
-    // console.log(JSON.stringify(speechState.pitchStatus));
-    // console.log(JSON.stringify(speechState.subThemes));
-    // console.log(JSON.stringify(speechState.userPitch));
-    // console.log(JSON.stringify(speechState.speechTone));
-
-    await axios.post(`users/${id}/files`, formData, {
+    const result = await axios.post(`users/${id}/files`, formData, {
       headers: { "content-type": "multipart/form-data" },
     });
+
+    setFiles(result.data.data.files);
+    isSaved(true);
+  }
+
+  function tipModalOpen() {
+    const [dominantNote] = Object.entries(speechState.pitchStatus)
+      .sort((a, b) => a[1] - b[1])
+      .pop();
+    setDominantNote(dominantNote);
+    setModalType("analyse");
+    setOnModal(true);
   }
 
   return (
     <ReviewLayout>
       <NavBar onReturnBtnClick={onReturnBtnClick} />
       <h1>{title}</h1>
+      <TipButtonBox>
+        <ButtonSmall
+          size={{ width: "80px", height: "29px" }}
+          text="분석 결과"
+          onClick={tipModalOpen}
+        />
+      </TipButtonBox>
       <Keyboard selectedNote={speechTone.note} />
       <audio controls src={recorderState.audio} />
       <h2>{speechTone.text}</h2>
@@ -88,33 +106,51 @@ function Review({
           })}
         </SubThemeList>
       )}
-      <ButtonLarge text="연습 저장하기" onClick={saveFile} />
+      <ButtonLarge text="연습 저장하기" onClick={saveFile} disabled={isSaved} />
       {onModal && (
         <Modal setOnModal={setOnModal}>
           <NoticeLayout>
-            <span>알림</span>
-            <p>
-              현재 리뷰중인 파일이 저장되지 않았습니다. 새로운 스피치 연습으로
-              이동하시겠습니까?
-            </p>
-            <ButtonBox>
-              <ButtonSmall
-                size={{ width: "80px", height: "29px" }}
-                text="예"
-                onClick={() => {
-                  speechHandlers.clearSpeech();
-                  recorderHandlers.cancelRecording();
-                  navigate(from ? from : "/");
-                }}
-              />
-              <ButtonSmall
-                size={{ width: "80px", height: "29px" }}
-                text="아니요"
-                onClick={() => {
-                  setOnModal(false);
-                }}
-              />
-            </ButtonBox>
+            {modalType === "confirm" && (
+              <>
+                <span>알림</span>
+                <p>
+                  현재 리뷰중인 파일이 저장되지 않았습니다. 새로운 스피치
+                  연습으로 이동하시겠습니까?
+                </p>
+                <ButtonBox>
+                  <ButtonSmall
+                    size={{ width: "80px", height: "29px" }}
+                    text="예"
+                    onClick={() => {
+                      speechHandlers.clearSpeech();
+                      recorderHandlers.cancelRecording();
+                      navigate(from ? from : "/");
+                    }}
+                  />
+                  <ButtonSmall
+                    size={{ width: "80px", height: "29px" }}
+                    text="아니요"
+                    onClick={() => {
+                      setOnModal(false);
+                    }}
+                  />
+                </ButtonBox>
+              </>
+            )}
+            {modalType === "analyse" && (
+              <TipBox>
+                <p>
+                  {auth.user.nickname}님의 스피치는 전반적으로 {dominantNote}톤
+                  입니다.
+                </p>
+                <p>{TIP_TEXT[dominantNote]}</p>
+                {speechState.userPitch.note === dominantNote ? (
+                  <p>{CLOSING_TEXT.matching}</p>
+                ) : (
+                  <p>{CLOSING_TEXT.different}</p>
+                )}
+              </TipBox>
+            )}
           </NoticeLayout>
         </Modal>
       )}
@@ -208,6 +244,27 @@ const ButtonBox = styled.div`
 
   button {
     position: relative;
+  }
+`;
+
+const TipButtonBox = styled.div`
+  button {
+    posiiton: absolute;
+    top: 11%;
+    right: 10%;
+  }
+`;
+
+const TipBox = styled.div`
+  width: 90%;
+  height: 100%;
+  border-radius: 5px;
+  padding: 5px;
+
+  p {
+    width: 100%;
+    font-size: 18px;
+    text-align: left;
   }
 `;
 

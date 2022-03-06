@@ -47,31 +47,49 @@ function StepFour({
   function recordPitch() {
     analyserNode.getFloatTimeDomainData(buffer);
     const fundamentalFrequency = autoCorrelate(buffer, audioCtx.sampleRate);
-    if (!fundamentalFrequency) return;
-    const note = findClosestNote(fundamentalFrequency);
+    if (!fundamentalFrequency || fundamentalFrequency > 500) return;
+    // const note = findClosestNote(fundamentalFrequency);
 
-    if (note && !pitchStatus[note.frequency]) {
-      setPitchStatus((prev) => {
-        return {
-          ...prev,
-          [note.frequency]: 1,
-        };
-      });
-    }
+    // if (note && !pitchStatus[note.frequency]) {
+    //   setPitchStatus((prev) => {
+    //     return {
+    //       ...prev,
+    //       [note.frequency]: 1,
+    //     };
+    //   });
+    // }
 
-    if (note && pitchStatus[note.frequency]) {
-      setPitchStatus((prev) => {
-        return {
-          ...prev,
-          [note.frequency]: prev[note.frequency] + 1,
-        };
-      });
-    }
+    // if (note && pitchStatus[note.frequency]) {
+    //   setPitchStatus((prev) => {
+    //     return {
+    //       ...prev,
+    //       [note.frequency]: prev[note.frequency] + 1,
+    //     };
+    //   });
+    // }
 
     const currentNote = findNoteInRange(
       fundamentalFrequency,
       speechState.noteRange,
     );
+
+    if (!pitchStatus[currentNote.note]) {
+      setPitchStatus((prev) => {
+        return {
+          ...prev,
+          [currentNote.note]: 1,
+        };
+      });
+    }
+
+    if (pitchStatus[currentNote.note]) {
+      setPitchStatus((prev) => {
+        return {
+          ...prev,
+          [currentNote.note]: prev[currentNote.note] + 1,
+        };
+      });
+    }
 
     setCurrentNote(currentNote.note);
   }
@@ -89,7 +107,7 @@ function StepFour({
   }, [recorderState.recordingMin, recorderState.recordingSec]);
 
   useEffect(() => {
-    if (onAnalyse) return;
+    if (onAnalyse || !Object.keys(pitchStatus).length) return;
     console.log(pitchStatus);
 
     speechHandlers.setSpeechState((prev) => {
