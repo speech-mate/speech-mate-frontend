@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import propTypes from "prop-types";
 import {
   StepFourBox,
@@ -14,22 +14,21 @@ import { formatMin, formatSec } from "../../util/formatTime";
 import useInterval from "../../hooks/useInterval";
 import { getAudioContext, getAnalyser } from "../../handlers/audioCtxControls";
 import autoCorrelate from "../../util/autoCorrelate";
-import { findClosestNote2 } from "../../util/helpers";
+import { findClosestNote, findNoteInRange } from "../../util/helpers";
 
 function StepFour({
-  theme,
-  selectedNote,
-  userPitch,
-  subThemes,
+  speechState,
+  speechHandlers,
   recorderState,
-  handlers,
+  recorderHandlers,
 }) {
   const [source, setSource] = useState(null);
   const [currSubTheme, setCurrSubTheme] = useState(null);
   const [onAnalyse, setOnAnalyse] = useState(false);
-  const [pitches, setPitches] = useState([]);
   const [pitchStatus, setPitchStatus] = useState({});
+  const [currentNote, setCurrentNote] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const audioCtx = getAudioContext();
   const analyserNode = getAnalyser();
@@ -37,35 +36,44 @@ function StepFour({
   const buffer = new Float32Array(bufferLength);
 
   function toReview() {
-    handlers.saveRecording();
-    navigate("/practice/review");
+    recorderHandlers.saveRecording();
+    navigate("/practice/review", {
+      state: {
+        from: location,
+      },
+    });
   }
 
   function recordPitch() {
     analyserNode.getFloatTimeDomainData(buffer);
     const fundamentalFrequency = autoCorrelate(buffer, audioCtx.sampleRate);
     if (!fundamentalFrequency) return;
-    const note = findClosestNote2(fundamentalFrequency);
-    const noteKey = `${note?.octave}${note?.note}`;
+    const note = findClosestNote(fundamentalFrequency);
 
-    if (note && !pitchStatus[noteKey]) {
+    if (note && !pitchStatus[note.frequency]) {
       setPitchStatus((prev) => {
         return {
           ...prev,
-          [noteKey]: 1,
+          [note.frequency]: 1,
         };
       });
     }
 
-    if (note && pitchStatus[noteKey]) {
+    if (note && pitchStatus[note.frequency]) {
       setPitchStatus((prev) => {
         return {
           ...prev,
-          [noteKey]: prev[noteKey] + 1,
+          [note.frequency]: prev[note.frequency] + 1,
         };
       });
     }
-    setPitches([...pitches, fundamentalFrequency]);
+
+    const currentNote = findNoteInRange(
+      fundamentalFrequency,
+      speechState.noteRange,
+    );
+
+    setCurrentNote(currentNote.note);
   }
 
   useInterval(recordPitch, onAnalyse ? 1 : null);
@@ -81,12 +89,12 @@ function StepFour({
   }, [recorderState.recordingMin, recorderState.recordingSec]);
 
   useEffect(() => {
-    if (!pitches.length) return;
-
-    console.log(pitches);
+    if (onAnalyse) return;
     console.log(pitchStatus);
 
-    // speech ton analyse logic needed using pitch detection algorithm
+    speechHandlers.setSpeechState((prev) => {
+      return { ...prev, pitchStatus };
+    });
   }, [onAnalyse]);
 
   useEffect(async () => {
@@ -110,24 +118,26 @@ function StepFour({
   }, [source]);
 
   useEffect(() => {
-    if (!subThemes.length) return;
+    if (!speechState.subThemes.length) return;
     if (currSubTheme?.text === "남아있는 소주제가 없습니다.") return;
 
     if (!currSubTheme) {
       return setCurrSubTheme({
-        ...subThemes[0],
+        ...speechState.subThemes[0],
         index: 0,
       });
     }
 
     if (
-      recorderState.recordingMin === subThemes[currSubTheme.index].min &&
-      recorderState.recordingSec === subThemes[currSubTheme.index].sec
+      recorderState.recordingMin ===
+        speechState.subThemes[currSubTheme.index].min &&
+      recorderState.recordingSec ===
+        speechState.subThemes[currSubTheme.index].sec
     ) {
       setCurrSubTheme((prev) => {
-        return subThemes[currSubTheme.index + 1]
+        return speechState.subThemes[currSubTheme.index + 1]
           ? {
-              ...subThemes[currSubTheme.index + 1],
+              ...speechState.subThemes[currSubTheme.index + 1],
               index: currSubTheme.index + 1,
             }
           : {
@@ -140,7 +150,7 @@ function StepFour({
 
   return (
     <StepFourBox>
-      <h1>{theme}</h1>
+      <h1>{speechState.title}</h1>
       <TimeBox>
         <span>{`${formatMin(recorderState.recordingMin)} : ${formatSec(
           recorderState.recordingSec,
@@ -149,20 +159,23 @@ function StepFour({
         )}`}</span>
       </TimeBox>
       <FlashCard>
-        {subThemes.length ? (
+        {speechState.subThemes.length ? (
           <span>{currSubTheme?.text}</span>
         ) : (
           <span>설정하신 소주제가 없습니다.</span>
         )}
       </FlashCard>
-      <Keyboard selectedNote={selectedNote} />
+      <Keyboard
+        selectedNote={speechState.speechTone.note}
+        currentNote={currentNote}
+      />
       <ButtonBox>
         {!recorderState.initRecording && (
           <ButtonLarge
             text="녹음 시작"
             onClick={() => {
               setOnAnalyse(true);
-              handlers.startRecording();
+              recorderHandlers.startRecording();
             }}
           />
         )}
@@ -171,7 +184,7 @@ function StepFour({
             text="일시 정지"
             onClick={() => {
               setOnAnalyse(false);
-              handlers.pauseRecording();
+              recorderHandlers.pauseRecording();
             }}
           />
         )}
@@ -180,7 +193,7 @@ function StepFour({
             text="녹음 재개"
             onClick={() => {
               setOnAnalyse(true);
-              handlers.resumeRecording();
+              recorderHandlers.resumeRecording();
             }}
           />
         )}
@@ -191,12 +204,10 @@ function StepFour({
 }
 
 StepFour.propTypes = {
-  theme: propTypes.string,
-  selectedNote: propTypes.string,
-  userPitch: propTypes.object,
-  subThemes: propTypes.array,
+  speechState: propTypes.object,
+  speechHandlers: propTypes.object,
   recorderState: propTypes.object,
-  handlers: propTypes.object,
+  recorderHandlers: propTypes.object,
 };
 
 export default StepFour;

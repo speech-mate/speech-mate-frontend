@@ -6,14 +6,23 @@ import { nanoid } from "nanoid";
 const NOTE = ["C", "D", "E", "F", "G"];
 const HALF_NOTE = ["C#", "D#", "F#"];
 
-function Keyboard({ selectedNote }) {
+function Keyboard({ selectedNote, currentNote }) {
   return (
     <KeyboardLayout>
       {NOTE.map((note) => {
         const key = nanoid();
 
         return (
-          <KeyNote key={key} id={selectedNote === note ? "selected" : ""}>
+          <KeyNote
+            key={key}
+            id={
+              selectedNote === note
+                ? "selected"
+                : currentNote === note
+                ? "current"
+                : ""
+            }
+          >
             <span>{note}</span>
           </KeyNote>
         );
@@ -37,6 +46,10 @@ const KeyboardLayout = styled.div`
 
   #selected {
     background: var(--pale-lavender-color);
+  }
+
+  #current {
+    background: var(--magnolia-color);
   }
 `;
 
@@ -72,6 +85,7 @@ const HalfNote = styled.div`
 `;
 
 Keyboard.propTypes = {
+  currentNote: propTypes.string,
   selectedNote: propTypes.string,
 };
 

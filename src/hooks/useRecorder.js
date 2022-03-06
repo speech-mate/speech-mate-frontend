@@ -17,6 +17,7 @@ const initialState = {
   mediaStream: null,
   mediaRecorder: null,
   audio: null,
+  blob: null,
 };
 
 function useRecorder() {
@@ -96,6 +97,7 @@ function useRecorder() {
           return {
             ...initialState,
             audio: window.URL.createObjectURL(blob),
+            blob,
           };
         }
 

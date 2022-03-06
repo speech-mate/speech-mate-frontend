@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import propTypes from "prop-types";
 import styled from "styled-components";
 
 import Logo from "../components/Logo/Logo";
@@ -11,7 +12,7 @@ import { userLogin } from "../api/auth";
 const VERIFY_USERINFO_URL = "/v2/user/me";
 const REVOKE_AUTH_URL = "/v1/user/unlink";
 
-function Login() {
+function Login({ setFiles }) {
   const [error, setError] = useState("");
   const { setAuth } = useAuth();
   const kapi = useKapi();
@@ -62,6 +63,7 @@ function Login() {
               },
               accessToken,
             });
+            setFiles(files);
             navigate(from, { replace: true });
           } catch (error) {
             console.error(error);
@@ -113,5 +115,9 @@ const LoginButton = styled.div`
     width: 330px;
   }
 `;
+
+Login.propTypes = {
+  setFiles: propTypes.func,
+};
 
 export default Login;

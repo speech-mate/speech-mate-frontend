@@ -36,31 +36,7 @@ export function findFrequency(autocorr, sampleRate) {
   return fundamentalFrequency;
 }
 
-export function findClosestNote(freqArr) {
-  const avgFreqency =
-    freqArr.reduce((pre, curr) => pre + curr) / freqArr.length;
-  let low = -1;
-  let high = NOTES.length;
-
-  while (high - low > 1) {
-    const pivot = Math.round((low + high) / 2);
-    if (NOTES[pivot]?.frequency <= avgFreqency) {
-      low = pivot;
-    } else {
-      high = pivot;
-    }
-  }
-
-  if (
-    Math.abs(NOTES[high]?.frequency - avgFreqency) <=
-    Math.abs(NOTES[low]?.frequency - avgFreqency)
-  )
-    return NOTES[high];
-
-  return NOTES[low];
-}
-
-export function findClosestNote2(freq) {
+export function findClosestNote(freq) {
   let low = -1;
   let high = NOTES.length;
 
@@ -80,4 +56,47 @@ export function findClosestNote2(freq) {
     return NOTES[high];
 
   return NOTES[low];
+}
+
+export function getNoteRange(pitchStatus) {
+  let index;
+  const [dominantFreq] = Object.entries(pitchStatus)
+    .sort((a, b) => a[1] - b[1])
+    .pop();
+  const adjustedNotes = ["C", "D", "E", "F", "G"];
+
+  NOTES.forEach((note, i) => {
+    if (note.frequency === Number(dominantFreq)) {
+      index = i;
+    }
+  });
+
+  return NOTES.slice(index - 2, index + 3).map((prevNote, i) => {
+    return {
+      ...prevNote,
+      note: adjustedNotes[i],
+    };
+  });
+}
+
+export function findNoteInRange(freq, range) {
+  let low = 0;
+  let high = range.length;
+
+  while (high - low > 1) {
+    const pivot = Math.round((low + high) / 2);
+    if (range[pivot]?.frequency <= freq) {
+      low = pivot;
+    } else {
+      high = pivot;
+    }
+  }
+
+  if (
+    Math.abs(range[high]?.frequency - freq) <=
+    Math.abs(range[low]?.frequency - freq)
+  )
+    return range[high];
+
+  return range[low];
 }
