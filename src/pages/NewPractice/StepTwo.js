@@ -58,6 +58,7 @@ function StepTwo({
     if (micState.count !== 0 || !Object.keys(pitchStatus).length) return;
 
     const noteRange = getNoteRange(pitchStatus);
+    console.log(noteRange);
 
     speechHandlers.setSpeechState((prev) => {
       return {

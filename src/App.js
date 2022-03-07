@@ -9,9 +9,11 @@ import Login from "./pages/Login";
 import Main from "./pages/Main";
 import NewPractice from "./pages/NewPractice/NewPractice";
 import Review from "./pages/Review/Review";
+import Files from "./pages/Files/Files";
 
 import useRecorder from "./hooks/useRecorder";
 import useSpeechState from "./hooks/useSpeechState";
+import PersistLogin from "./components/PersistLogin";
 
 function App() {
   const [files, setFiles] = useState([]);
@@ -23,33 +25,47 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="login" element={<Login setFiles={setFiles} />} />
-          <Route element={<RequireAuth />}>
-            <Route path="/" element={<Main />} />
-            <Route
-              path="practice/new"
-              element={
-                <NewPractice
-                  speechState={speechState}
-                  speechHandlers={speechHandlers}
-                  recorderState={recorderState}
-                  recorderHandlers={recorderHandlers}
-                />
-              }
-            />
-            <Route
-              path="practice/review"
-              element={
-                <Review
-                  files={files}
-                  setFiles={setFiles}
-                  speechState={speechState}
-                  speechHandlers={speechHandlers}
-                  recorderState={recorderState}
-                  recorderHandlers={recorderHandlers}
-                />
-              }
-            />
+          <Route element={<PersistLogin />}>
+            <Route element={<RequireAuth />}>
+              <Route path="/" element={<Main />} />
+              <Route
+                path="practice/new"
+                element={
+                  <NewPractice
+                    speechState={speechState}
+                    speechHandlers={speechHandlers}
+                    recorderState={recorderState}
+                    recorderHandlers={recorderHandlers}
+                  />
+                }
+              />
+              <Route
+                path="practice/review"
+                element={
+                  <Review
+                    files={files}
+                    setFiles={setFiles}
+                    speechState={speechState}
+                    speechHandlers={speechHandlers}
+                    recorderState={recorderState}
+                    recorderHandlers={recorderHandlers}
+                  />
+                }
+                s
+              />
+              <Route
+                path="practice/files"
+                element={
+                  <Files
+                    files={files}
+                    setFiles={setFiles}
+                    speechHandlers={speechHandlers}
+                  />
+                }
+              />
+            </Route>
           </Route>
+          <Route path="/error" element={<Error />} />
           <Route
             path="*"
             element={<Error error={{ code: 404, message: "Page Not Found" }} />}

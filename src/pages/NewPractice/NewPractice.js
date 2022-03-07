@@ -23,7 +23,6 @@ function NewPractice({
   const navigate = useNavigate();
 
   function toMainPage() {
-    speechHandlers.clearSpeech();
     navigate("/");
   }
 
@@ -41,7 +40,8 @@ function NewPractice({
 
     if (step === STEP.FOUR) {
       if (recorderState.initRecording) {
-        recorderHandlers.saveRecording();
+        // recorderHandlers.saveRecording();
+        recorderHandlers.cancelRecording();
       }
       setStep(STEP.THREE);
     }

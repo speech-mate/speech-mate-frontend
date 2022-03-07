@@ -95,7 +95,7 @@ function useRecorder() {
       setRecorderState((prev) => {
         if (prev.mediaRecorder) {
           return {
-            ...initialState,
+            ...prev,
             audio: window.URL.createObjectURL(blob),
             blob,
           };

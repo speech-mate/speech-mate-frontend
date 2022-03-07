@@ -7,6 +7,7 @@ const initialState = {
   userPitch: null,
   noteRange: [],
   pitchStatus: null,
+  url: null,
 };
 
 function useSpeechState() {
