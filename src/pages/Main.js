@@ -6,14 +6,16 @@ import Logo from "../components/Logo/Logo";
 import ButtonLarge from "../components/Button/ButtonLarge";
 
 import useAuth from "../hooks/useAuth";
-import useKapi from "../hooks/useKapi";
+import useLogout from "../hooks/useLogout";
+// import useKapi from "../hooks/useKapi";
 
-const REVOKE_AUTH_URL = "/v1/user/unlink";
+// const REVOKE_AUTH_URL = "/v1/user/unlink";
 
 function Main() {
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
-  const kapi = useKapi();
+  const logout = useLogout();
+  // const kapi = useKapi();
 
   function totNewPractice() {
     navigate("/practice/new");
@@ -23,18 +25,18 @@ function Main() {
     navigate("/practice/files");
   }
 
-  function logout() {
-    kapi.API.request({
-      url: REVOKE_AUTH_URL,
-      success: () => {
-        setAuth({});
-        localStorage.clear();
-      },
-      fail: (err) => {
-        console.error(err);
-      },
-    });
-  }
+  // function signout() {
+  //   setAuth({});
+  //   localStorage.clear();
+  // }
+
+  // function logout() {
+  //   kapi.API.request({
+  //     url: REVOKE_AUTH_URL,
+  //     success: signout,
+  //     fail: signout,
+  //   });
+  // }
 
   return (
     <MainLayout>

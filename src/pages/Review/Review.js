@@ -10,10 +10,12 @@ import ButtonSmall from "../../components/Button/ButtonSmall";
 import Keyboard from "../../components/Keyboard/Keyboard";
 import Modal from "../../components/Modal/Modal";
 import useAuth from "../../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-import axios from "../../api/axios";
 import { formatMin, formatSec } from "../../util/formatTime";
 import { CLOSING_TEXT, TIP_TEXT } from "../../constants/review";
+import { createFile } from "../../api/files";
+import { sortFiles } from "../../util/sortFiles";
 
 function Review({
   files,
@@ -31,14 +33,26 @@ function Review({
   const { auth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const axios = useAxiosPrivate();
   const from = location.state?.from?.pathname;
-  const { title, speechTone, subThemes } = speechState;
+  const { title, speechTone, subThemes, url } = speechState;
+
+  console.log(recorderState);
+  console.log(speechState.speechTone);
+  console.log(dominantNote);
+  console.log(isSaved);
 
   function onReturnBtnClick() {
+    if (from === "/practice/files") {
+      speechHandlers.clearSpeech();
+      navigate(from);
+    }
+
     if (recorderState.audio && !isSaved) {
       setModalType("confirm");
       return setOnModal(true);
     }
+
     navigate(from ? from : "/");
   }
 
@@ -58,12 +72,9 @@ function Review({
     formData.append("userPitch", JSON.stringify(speechState.userPitch));
     formData.append("selectedTone", JSON.stringify(speechState.speechTone));
 
-    const result = await axios.post(`users/${id}/files`, formData, {
-      headers: { "content-type": "multipart/form-data" },
-    });
-
-    setFiles(result.data.data.files);
-    isSaved(true);
+    const result = await createFile({ axios, id, formData });
+    setFiles(sortFiles(result.data.files));
+    setIsSaved(true);
   }
 
   function tipModalOpen() {
@@ -87,7 +98,7 @@ function Review({
         />
       </TipButtonBox>
       <Keyboard selectedNote={speechTone.note} />
-      <audio controls src={recorderState.audio} />
+      <audio controls src={recorderState.audio ? recorderState.audio : url} />
       <h2>{speechTone.text}</h2>
       {!!subThemes.length && (
         <SubThemeList>
@@ -144,7 +155,7 @@ function Review({
                   입니다.
                 </p>
                 <p>{TIP_TEXT[dominantNote]}</p>
-                {speechState.userPitch.note === dominantNote ? (
+                {speechState.speechTone.note === dominantNote ? (
                   <p>{CLOSING_TEXT.matching}</p>
                 ) : (
                   <p>{CLOSING_TEXT.different}</p>
@@ -183,6 +194,11 @@ const ReviewLayout = styled.div`
   button {
     position: absolute;
     bottom: 11%;
+  }
+
+  button:disabled {
+    background-color: var(--ice-grey-color);
+    color: var(--dark-grey-blue-color);
   }
 `;
 

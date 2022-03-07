@@ -19,7 +19,11 @@ function Error({ error }) {
             font: "30px",
             weight: "normal",
           }}
-          text={`${error.code} ${error.message}`}
+          text={
+            error
+              ? `${error.code} ${error.message}`
+              : "⚠️ Error.. Please Try Later"
+          }
         />
       </LogoBox>
       <ButtonLarge
@@ -51,7 +55,7 @@ const LogoBox = styled.div`
 `;
 
 Error.propTypes = {
-  error: propTypes.object.isRequired,
+  error: propTypes.object,
 };
 
 export default Error;

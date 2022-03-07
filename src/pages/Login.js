@@ -8,6 +8,8 @@ import Logo from "../components/Logo/Logo";
 import useAuth from "../hooks/useAuth";
 import useKapi from "../hooks/useKapi";
 import { userLogin } from "../api/auth";
+import { setCookie } from "../handlers/cookieControls";
+import { LOGIN_TEXT } from "../constants/login";
 
 const VERIFY_USERINFO_URL = "/v2/user/me";
 const REVOKE_AUTH_URL = "/v1/user/unlink";
@@ -28,7 +30,7 @@ function Login({ setFiles }) {
       scope: "profile_nickname, profile_image, account_email",
       success: responseKakao,
       fail: () => {
-        setError("로그인 실패. 잠시 후 다시 시도해 주세요.");
+        setError(LOGIN_TEXT.LOGIN_FAILED);
       },
     });
 
@@ -42,9 +44,7 @@ function Login({ setFiles }) {
             kapi.API.request({
               url: REVOKE_AUTH_URL,
             });
-            setError(
-              "서비스 이용을 위하여 필수정보와 선택정보인 이메일을 모두 동의 해주세요.",
-            );
+            setError(LOGIN_TEXT.REQUEST_ACCEPT_ALL);
             return;
           }
 
@@ -53,6 +53,7 @@ function Login({ setFiles }) {
             const {
               userInfo: { _id: id, nickname, email, photo, files },
               accessToken,
+              refreshToken,
             } = response.data;
             setAuth({
               user: {
@@ -63,10 +64,11 @@ function Login({ setFiles }) {
               },
               accessToken,
             });
+            setCookie("jwt", refreshToken);
             setFiles(files);
             navigate(from, { replace: true });
           } catch (error) {
-            console.error(error);
+            navigate("error");
           }
         },
       });
