@@ -1,7 +1,7 @@
 import axios from "../api/axios";
 import useAuth from "./useAuth";
 
-function useRefreshToken(setFiles) {
+function useRefreshToken() {
   const { setAuth } = useAuth();
 
   async function refresh() {

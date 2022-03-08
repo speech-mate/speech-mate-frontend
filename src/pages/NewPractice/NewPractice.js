@@ -47,27 +47,27 @@ function NewPractice({
     }
   }
 
-  function toNextStep(e) {
-    if (step === STEP.ONE) {
-      const selectedNote = e.target.dataset.note;
+  // function toNextStep(e) {
+  //   if (step === STEP.ONE) {
+  //     const selectedNote = e.target.dataset.note;
 
-      speechHandlers.setSpeechState((prev) => {
-        return {
-          ...prev,
-          speechTone: selectedNote,
-        };
-      });
-      setStep(STEP.TWO);
-    }
+  //     speechHandlers.setSpeechState((prev) => {
+  //       return {
+  //         ...prev,
+  //         speechTone: selectedNote,
+  //       };
+  //     });
+  //     setStep(STEP.TWO);
+  //   }
 
-    if (step === STEP.TWO) {
-      setStep(STEP.THREE);
-    }
+  //   if (step === STEP.TWO) {
+  //     setStep(STEP.THREE);
+  //   }
 
-    if (step === STEP.THREE) {
-      setStep(STEP.FOUR);
-    }
-  }
+  //   if (step === STEP.THREE) {
+  //     setStep(STEP.FOUR);
+  //   }
+  // }
 
   function onStepOneSelection(e) {
     const note = e.target.dataset.note;
