@@ -10,11 +10,9 @@ const options = {
 };
 
 export const setCookie = (name, value) => {
-  // cookies.set(name, value, options);
-  return cookies.set(name, value);
+  return cookies.set(name, value, options);
 };
 
 export const removeCookie = (name) => {
-  // cookies.remove(name, options)
-  return cookies.remove(name);
+  return cookies.remove(name, options);
 };
