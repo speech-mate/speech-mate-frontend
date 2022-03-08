@@ -138,7 +138,8 @@ function StepThree({
     if (
       speechState.subThemes.length &&
       speechState.subThemes.find(
-        (subTheme) => subTheme.time === convertedSubThemeTime,
+        (subTheme) =>
+          convertToSec(subTheme.min, subTheme.sec) === convertedSubThemeTime,
       )
     ) {
       return setIsValid({

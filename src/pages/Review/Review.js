@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
@@ -14,11 +14,10 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 import { formatMin, formatSec } from "../../util/formatTime";
 import { CLOSING_TEXT, TIP_TEXT } from "../../constants/review";
-import { createFile } from "../../api/files";
+import { createFile, updateFile } from "../../api/files";
 import { sortFiles } from "../../util/sortFiles";
 
 function Review({
-  files,
   setFiles,
   recorderState,
   recorderHandlers,
@@ -27,33 +26,80 @@ function Review({
 }) {
   const [onModal, setOnModal] = useState(false);
   const [modalType, setModalType] = useState(null);
-  const [isModified, setIsModified] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const [dominantNote, setDominantNote] = useState(null);
-  const { auth } = useAuth();
+  const [isSaved, setIsSaved] = useState(false);
+  const [isModified, setIsModified] = useState(false);
+  const [checkedInputs, setCheckedInputs] = useState([]);
+
   const navigate = useNavigate();
   const location = useLocation();
   const axios = useAxiosPrivate();
-  const from = location.state?.from?.pathname;
-  const { title, speechTone, subThemes, url } = speechState;
+  const { auth } = useAuth();
 
-  console.log(recorderState);
-  console.log(speechState.speechTone);
-  console.log(dominantNote);
-  console.log(isSaved);
+  const from = location.state?.from?.pathname;
+  const { title, speechTone, subThemes, url, fileId } = speechState;
+
+  useEffect(() => {
+    const [dominantNote] = Object.entries(speechState.pitchStatus)
+      .sort((a, b) => a[1] - b[1])
+      .pop();
+
+    setDominantNote(dominantNote);
+  }, [speechState.pitchStatus]);
+
+  useEffect(() => {
+    if (from !== "/practice/files") return;
+
+    const isAchieved = [];
+
+    subThemes.forEach((theme) => {
+      if (theme.isAchieved) {
+        isAchieved.push(theme.text);
+      }
+    });
+
+    setCheckedInputs([...isAchieved]);
+  }, []);
+
+  function changeHandler(checked, name) {
+    let newInputs;
+
+    if (checked) {
+      newInputs = [...checkedInputs, name];
+      setCheckedInputs(newInputs);
+    } else {
+      newInputs = checkedInputs.filter((el) => el !== name);
+      setCheckedInputs(newInputs);
+    }
+
+    const prevCheckedInputs = subThemes
+      .filter((theme) => theme.isAchieved)
+      .map((theme) => theme.text);
+
+    if (
+      JSON.stringify(prevCheckedInputs.sort()) !==
+      JSON.stringify(newInputs.sort())
+    ) {
+      setIsModified(true);
+    } else {
+      setIsModified(false);
+    }
+  }
 
   function onReturnBtnClick() {
     if (from === "/practice/files") {
       speechHandlers.clearSpeech();
       navigate(from);
+      return;
     }
 
-    if (recorderState.audio && !isSaved) {
+    if (!isSaved) {
       setModalType("confirm");
-      return setOnModal(true);
+      setOnModal(true);
+      return;
     }
 
-    navigate(from ? from : "/");
+    navigate(from);
   }
 
   async function saveFile() {
@@ -75,13 +121,25 @@ function Review({
     const result = await createFile({ axios, id, formData });
     setFiles(sortFiles(result.data.files));
     setIsSaved(true);
+    navigate("/practice/files");
+  }
+
+  async function updateSubTheme() {
+    const id = auth.user.id;
+    const newSubThemes = subThemes.map((theme) => {
+      return {
+        ...theme,
+        isAchieved: checkedInputs.includes(theme.text),
+      };
+    });
+
+    const result = await updateFile({ axios, id, newSubThemes, fileId });
+    setFiles(sortFiles(result.data.files));
+    setIsModified(false);
+    navigate("/practice/files");
   }
 
   function tipModalOpen() {
-    const [dominantNote] = Object.entries(speechState.pitchStatus)
-      .sort((a, b) => a[1] - b[1])
-      .pop();
-    setDominantNote(dominantNote);
     setModalType("analyse");
     setOnModal(true);
   }
@@ -97,27 +155,54 @@ function Review({
           onClick={tipModalOpen}
         />
       </TipButtonBox>
-      <Keyboard selectedNote={speechTone.note} />
-      <audio controls src={recorderState.audio ? recorderState.audio : url} />
       <h2>{speechTone.text}</h2>
+      <Keyboard selectedNote={speechTone.note} currentNote={dominantNote} />
+      <audio controls src={recorderState.audio ? recorderState.audio : url} />
       {!!subThemes.length && (
-        <SubThemeList>
-          {speechState.subThemes.map((subTheme) => {
-            const key = nanoid();
+        <>
+          <span>
+            소주제 이행률:{" "}
+            {Math.round((checkedInputs.length / subThemes.length) * 100)}%
+          </span>
+          <SubThemeList>
+            {speechState.subThemes.map((subTheme) => {
+              const key = nanoid();
 
-            return (
-              <li key={key}>
-                <span>{`${formatMin(subTheme.min)}분 ${formatSec(
-                  subTheme.sec,
-                )}초`}</span>
-                <span>{subTheme.text}</span>
-                <input type="checkbox" />
-              </li>
-            );
-          })}
-        </SubThemeList>
+              return (
+                <li key={key}>
+                  <span>{`${formatMin(subTheme.min)}분 ${formatSec(
+                    subTheme.sec,
+                  )}초`}</span>
+                  <span>{subTheme.text}</span>
+                  <input
+                    type="checkbox"
+                    name={subTheme.text}
+                    checked={checkedInputs.includes(subTheme.text)}
+                    onChange={(e) => {
+                      const { checked, name } = e.currentTarget;
+                      changeHandler(checked, name);
+                    }}
+                  />
+                </li>
+              );
+            })}
+          </SubThemeList>
+        </>
       )}
-      <ButtonLarge text="연습 저장하기" onClick={saveFile} disabled={isSaved} />
+      {from === "/practice/files" && (
+        <ButtonLarge
+          text="연습 저장하기"
+          onClick={updateSubTheme}
+          disabled={!isModified}
+        />
+      )}
+      {from === "/practice/new" && (
+        <ButtonLarge
+          text="연습 저장하기"
+          onClick={saveFile}
+          disabled={isSaved}
+        />
+      )}
       {onModal && (
         <Modal setOnModal={setOnModal}>
           <NoticeLayout>
@@ -187,8 +272,8 @@ const ReviewLayout = styled.div`
   }
 
   h2 {
-    font-size: 22px;
-    margin: 10px 0px;
+    font-size: 20px;
+    margin-top: 15px;
   }
 
   button {
@@ -199,6 +284,10 @@ const ReviewLayout = styled.div`
   button:disabled {
     background-color: var(--ice-grey-color);
     color: var(--dark-grey-blue-color);
+  }
+
+  span {
+    font-size: 20px;
   }
 `;
 
@@ -266,8 +355,8 @@ const ButtonBox = styled.div`
 const TipButtonBox = styled.div`
   button {
     posiiton: absolute;
-    top: 11%;
-    right: 10%;
+    top: 2.5%;
+    right: 3%;
   }
 `;
 

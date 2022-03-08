@@ -8,6 +8,7 @@ const initialState = {
   noteRange: [],
   pitchStatus: null,
   url: null,
+  fileId: null,
 };
 
 function useSpeechState() {
