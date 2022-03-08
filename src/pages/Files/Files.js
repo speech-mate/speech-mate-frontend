@@ -37,18 +37,10 @@ function Files({ files, setFiles, speechHandlers }) {
     const result = await deleteFile({ axios, id, filename, fileId });
 
     setFiles(sortFiles(result.data.files));
-
-    // const result = await axios.delete(`users/${id}/files/${fileId}`, {
-    //   data: {
-    //     filename,
-    //   },
-    // });
-
-    // setFiles(result.data.data.files);
   }
 
   function toReview(file) {
-    const { title, url, subThemes, selectedTone, userPitch, pitchStatus } =
+    const { title, url, subThemes, selectedTone, userPitch, pitchStatus, _id } =
       file;
     speechHandlers.setSpeechState({
       title,
@@ -57,6 +49,7 @@ function Files({ files, setFiles, speechHandlers }) {
       userPitch,
       pitchStatus,
       speechTone: selectedTone,
+      fileId: _id,
     });
     navigate("/practice/review", {
       state: {

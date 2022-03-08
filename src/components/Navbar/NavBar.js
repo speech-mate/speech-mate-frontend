@@ -20,8 +20,10 @@ const NavBarLayout = styled.nav`
 
 const ReturnBox = styled.div`
   display: flex;
+  justify-content: start;
   align-items: center;
   height: 100%;
+  width: 30%;
 
   i {
     margin-left: 15px;

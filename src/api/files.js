@@ -25,3 +25,15 @@ export async function createFile({ axios, id, formData }) {
 
   return res.data;
 }
+
+export async function updateFile({ axios, id, fileId, newSubThemes }) {
+  const res = await axios.put(
+    `users/${id}/files/${fileId}`,
+    { subThemes: newSubThemes },
+    {
+      withCredentials: true,
+    },
+  );
+
+  return res.data;
+}
