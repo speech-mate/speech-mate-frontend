@@ -9,7 +9,7 @@ import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 
 function Main() {
-  const { auth, setAuth } = useAuth();
+  const { auth } = useAuth();
   const navigate = useNavigate();
   const logout = useLogout();
 

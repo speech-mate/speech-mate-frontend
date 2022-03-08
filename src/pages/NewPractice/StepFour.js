@@ -14,7 +14,7 @@ import { formatMin, formatSec } from "../../util/formatTime";
 import useInterval from "../../hooks/useInterval";
 import { getAudioContext, getAnalyser } from "../../handlers/audioCtxControls";
 import autoCorrelate from "../../util/autoCorrelate";
-import { findClosestNote, findNoteInRange } from "../../util/helpers";
+import { findNoteInRange } from "../../util/helpers";
 
 function StepFour({
   speechState,
