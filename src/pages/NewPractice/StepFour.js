@@ -35,8 +35,6 @@ function StepFour({
   const bufferLength = 2048;
   const buffer = new Float32Array(bufferLength);
 
-  console.log(speechState.pitchStatus);
-
   function toReview() {
     recorderHandlers.saveRecording();
     navigate("/practice/review", {

@@ -6,6 +6,9 @@ function useRefreshToken() {
 
   async function refresh() {
     const response = await axios.get("/auth/refresh", {
+      headers: {
+        "Access-Control-Allow-Origin": process.env.REACT_APP_BASE_URL,
+      },
       withCredentials: true,
     });
     const {
