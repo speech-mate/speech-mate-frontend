@@ -12,7 +12,10 @@ export async function userLogin(kakaoAccount) {
     LOGIN_URL,
     { email, nickname, photo },
     {
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "Access-Control-Allow-Origin": process.env.REACT_APP_BASE_URL,
+      },
       withCredentials: true,
     },
   );
