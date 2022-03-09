@@ -7,6 +7,7 @@ const options = {
   sameSite: "none",
   secure: true,
   maxAge: Number(process.env.REACT_APP_COOKIE_MAX_AGE),
+  path: "/",
 };
 
 export const setCookie = (name, value) => {

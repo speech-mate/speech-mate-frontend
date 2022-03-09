@@ -121,7 +121,7 @@ function useRecorder() {
       setMaxRecordingTime(setRecorderState, min, sec),
     cancelRecording: () => {
       if (recorderState.mediaRecorder) {
-        recorderState.mediaRecorder
+        recorderState.mediaRecorder.stream
           .getAudioTracks()
           .forEach((track) => track.stop());
       }
