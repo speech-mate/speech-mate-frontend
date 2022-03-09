@@ -47,55 +47,39 @@ function NewPractice({
     }
   }
 
-  // function toNextStep(e) {
-  //   if (step === STEP.ONE) {
-  //     const selectedNote = e.target.dataset.note;
+  function toNextStep(e) {
+    if (step === STEP.ONE) {
+      const note = e.target.dataset.note;
+      const text = e.target.innerText;
 
-  //     speechHandlers.setSpeechState((prev) => {
-  //       return {
-  //         ...prev,
-  //         speechTone: selectedNote,
-  //       };
-  //     });
-  //     setStep(STEP.TWO);
-  //   }
+      speechHandlers.setSpeechState((prev) => {
+        return {
+          ...prev,
+          speechTone: {
+            text,
+            note,
+          },
+        };
+      });
+      setStep(STEP.TWO);
+    }
 
-  //   if (step === STEP.TWO) {
-  //     setStep(STEP.THREE);
-  //   }
+    if (step === STEP.TWO) {
+      setStep(STEP.THREE);
+    }
 
-  //   if (step === STEP.THREE) {
-  //     setStep(STEP.FOUR);
-  //   }
-  // }
-
-  function onStepOneSelection(e) {
-    const note = e.target.dataset.note;
-    const text = e.target.innerText;
-
-    speechHandlers.setSpeechState((prev) => {
-      return {
-        ...prev,
-        speechTone: {
-          text,
-          note,
-        },
-      };
-    });
-    setStep(STEP.TWO);
-  }
-
-  function onStepTwoSelection() {
-    setStep(STEP.THREE);
+    if (step === STEP.THREE) {
+      setStep(STEP.FOUR);
+    }
   }
 
   return (
     <NewPracticeLayout>
       <NavBar onReturnBtnClick={step === STEP.ONE ? toMainPage : toPrevStep} />
-      {step === STEP.ONE && <StepOne onStepOneSelection={onStepOneSelection} />}
+      {step === STEP.ONE && <StepOne toNextStep={toNextStep} />}
       {step === STEP.TWO && (
         <StepTwo
-          onStepTwoSelection={onStepTwoSelection}
+          toNextStep={toNextStep}
           speechState={speechState}
           speechHandlers={speechHandlers}
           micState={micState}
@@ -106,9 +90,10 @@ function NewPractice({
         <StepThree
           speechState={speechState}
           speechHandlers={speechHandlers}
-          setStep={setStep}
+          // setStep={setStep}
           recorderState={recorderState}
           recorderHandlers={recorderHandlers}
+          toNextStep={toNextStep}
         />
       )}
       {step === STEP.FOUR && (

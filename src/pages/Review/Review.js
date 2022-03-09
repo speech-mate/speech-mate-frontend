@@ -40,6 +40,8 @@ function Review({
   const { title, speechTone, subThemes, url, fileId } = speechState;
 
   useEffect(() => {
+    if (!speechState.pitchStatus) return;
+
     const [dominantNote] = Object.entries(speechState.pitchStatus)
       .sort((a, b) => a[1] - b[1])
       .pop();
@@ -155,8 +157,8 @@ function Review({
           onClick={tipModalOpen}
         />
       </TipButtonBox>
-      <h2>{speechTone.text}</h2>
-      <Keyboard selectedNote={speechTone.note} currentNote={dominantNote} />
+      <h2>{speechTone?.text}</h2>
+      <Keyboard selectedNote={speechTone?.note} currentNote={dominantNote} />
       <audio controls src={recorderState.audio ? recorderState.audio : url} />
       {!!subThemes.length && (
         <>
