@@ -14,7 +14,6 @@ export async function userLogin(kakaoAccount) {
     {
       headers: {
         "content-type": "application/json",
-        "Access-Control-Allow-Origin": process.env.REACT_APP_BASE_URL,
       },
       withCredentials: true,
     },
