@@ -13,7 +13,6 @@ import {
   SubThemeBox,
   SubThemeList,
 } from "./NewPracticeStyles";
-import { STEP } from "../../constants/newPractice";
 import { convertToSec, formatMin, formatSec } from "../../util/formatTime";
 
 const initialValidationState = {
