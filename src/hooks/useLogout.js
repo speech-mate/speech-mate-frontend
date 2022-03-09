@@ -1,4 +1,3 @@
-import { removeCookie } from "../handlers/cookieControls";
 import useAuth from "./useAuth";
 import useKapi from "./useKapi";
 
@@ -11,7 +10,6 @@ function useLogout() {
   function signout() {
     setAuth({});
     localStorage.clear();
-    removeCookie("jwt");
   }
 
   async function logout() {
