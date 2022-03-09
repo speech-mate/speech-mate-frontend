@@ -28,9 +28,9 @@ const initialValidationState = {
 };
 
 function StepThree({
+  toNextStep,
   speechState,
   speechHandlers,
-  setStep,
   recorderState,
   recorderHandlers,
 }) {
@@ -76,7 +76,8 @@ function StepThree({
           title: speechThemeRef.current.value,
         };
       });
-      setStep(STEP.FOUR);
+
+      toNextStep();
     }
   }
 
@@ -270,7 +271,7 @@ function StepThree({
 StepThree.propTypes = {
   speechState: propTypes.object,
   speechHandlers: propTypes.object,
-  setStep: propTypes.func,
+  toNextStep: propTypes.func,
   recorderState: propTypes.object,
   recorderHandlers: propTypes.object,
 };

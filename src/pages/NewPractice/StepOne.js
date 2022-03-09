@@ -6,7 +6,7 @@ import ButtonLarge from "../../components/Button/ButtonLarge";
 import { TEXT_CONTENTS, SELECTIONS } from "../../constants/newPractice";
 import { StepOneBox, SelectToneBox } from "./NewPracticeStyles";
 
-function StepOne({ onStepOneSelection }) {
+function StepOne({ toNextStep }) {
   return (
     <StepOneBox>
       <h3>{TEXT_CONTENTS.ONE.TITLE}</h3>
@@ -21,7 +21,7 @@ function StepOne({ onStepOneSelection }) {
               key={key}
               text={TEXT}
               note={NOTE}
-              onClick={onStepOneSelection}
+              onClick={toNextStep}
             />
           );
         })}
@@ -31,7 +31,7 @@ function StepOne({ onStepOneSelection }) {
 }
 
 StepOne.propTypes = {
-  onStepOneSelection: propTypes.func,
+  toNextStep: propTypes.func,
 };
 
 export default StepOne;

@@ -12,12 +12,7 @@ import useInterval from "../../hooks/useInterval";
 import autoCorrelate from "../../util/autoCorrelate";
 import { findClosestNote, getNoteRange } from "../../util/helpers";
 
-function StepTwo({
-  onStepTwoSelection,
-  speechHandlers,
-  micState,
-  micHandlers,
-}) {
+function StepTwo({ toNextStep, speechHandlers, micState, micHandlers }) {
   const [source, setSource] = useState(null);
   const [pitchStatus, setPitchStatus] = useState({});
 
@@ -108,14 +103,14 @@ function StepTwo({
           disabled={micState.initMic}
         />
       ) : (
-        <ButtonLarge text={SELECTIONS.TWO[1]} onClick={onStepTwoSelection} />
+        <ButtonLarge text={SELECTIONS.TWO[1]} onClick={toNextStep} />
       )}
     </StepTwoBox>
   );
 }
 
 StepTwo.propTypes = {
-  onStepTwoSelection: propTypes.func,
+  toNextStep: propTypes.func,
   speechState: propTypes.object,
   speechHandlers: propTypes.object,
   micState: propTypes.object,
