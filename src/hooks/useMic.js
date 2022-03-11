@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { turnOnMic, stopAudioTracks } from "../handlers/micControls";
 import useInterval from "./useInterval";
 
