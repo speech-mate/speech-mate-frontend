@@ -76,7 +76,6 @@ function StepTwo({ toNextStep, speechHandlers }) {
     if (micState.initMic || !Object.keys(pitchStatus).length) return;
 
     const noteRange = getNoteRange(pitchStatus);
-    console.log(noteRange);
 
     setCurrentFF(noteRange[2].frequency);
     speechHandlers.setSpeechState((prev) => {
