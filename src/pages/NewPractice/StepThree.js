@@ -170,6 +170,16 @@ function StepThree({
     subThemeTextRef.current.value = "";
   }
 
+  function filterSubThemes(subTheme) {
+    console.log(subTheme.text);
+    speechHandlers.setSpeechState((prev) => {
+      return {
+        ...prev,
+        subThemes: prev.subThemes.filter((el) => el.text !== subTheme.text),
+      };
+    });
+  }
+
   return (
     <StepThreeBox>
       <label>
@@ -257,6 +267,10 @@ function StepThree({
                   subTheme.sec,
                 )}초`}</span>
                 <span>{subTheme.text}</span>
+                <i
+                  className="fa-solid fa-trash-can"
+                  onClick={() => filterSubThemes(subTheme)}
+                ></i>
               </li>
             );
           })}

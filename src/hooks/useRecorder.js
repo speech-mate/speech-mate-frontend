@@ -114,7 +114,12 @@ function useRecorder() {
   return {
     recorderState,
     startRecording: () => startRecording(setRecorderState),
-    saveRecording: () => saveRecording(recorderState.mediaRecorder),
+    saveRecording: () => {
+      saveRecording(recorderState.mediaRecorder);
+      setRecorderState((prev) => {
+        return { ...prev, initRecording: false };
+      });
+    },
     pauseRecording: () => pauseRecodring(recorderState.mediaRecorder),
     resumeRecording: () => resumeRecodring(recorderState.mediaRecorder),
     setMaxRecordingTime: (min, sec) =>

@@ -1,10 +1,10 @@
 import React from "react";
-import { nanoid } from "nanoid";
 import propTypes from "prop-types";
+import { nanoid } from "nanoid";
 
-import ButtonLarge from "../../components/Button/ButtonLarge";
-import { TEXT_CONTENTS, SELECTIONS } from "../../constants/newPractice";
 import { StepOneBox, SelectToneBox } from "./NewPracticeStyles";
+import { TEXT_CONTENTS, SELECTIONS } from "../../constants/newPractice";
+import ButtonLarge from "../../components/Button/ButtonLarge";
 
 function StepOne({ toNextStep }) {
   return (

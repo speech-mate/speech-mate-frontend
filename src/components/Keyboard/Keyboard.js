@@ -16,7 +16,9 @@ function Keyboard({ selectedNote, currentNote }) {
           <KeyNote
             key={key}
             id={
-              selectedNote === note
+              selectedNote === currentNote && selectedNote == note
+                ? "matched"
+                : selectedNote === note
                 ? "selected"
                 : currentNote === note
                 ? "current"
@@ -44,12 +46,16 @@ const KeyboardLayout = styled.div`
   overflow: hidden;
   margin-top: 18px;
 
+  #matched {
+    background: var(--jasmine-green-color);
+  }
+
   #selected {
-    background: var(--pale-lavender-color);
+    background: var(--maximum-blue-purple-color);
   }
 
   #current {
-    background: var(--magnolia-color);
+    background: var(--pale-lavender-color);
   }
 `;
 

@@ -8,10 +8,8 @@ import Logo from "../components/Logo/Logo";
 import useAuth from "../hooks/useAuth";
 import useKapi from "../hooks/useKapi";
 import { userLogin } from "../api/auth";
-import { LOGIN_TEXT } from "../constants/login";
+import { LOGIN_TEXT, LOGIN_URL, LOGIN_BTN } from "../constants/login";
 
-const VERIFY_USERINFO_URL = "/v2/user/me";
-const REVOKE_AUTH_URL = "/v1/user/unlink";
 const REFRESH_TOKEN = "jwt";
 
 function Login({ setFiles }) {
@@ -26,8 +24,8 @@ function Login({ setFiles }) {
     if (!kapi) return;
 
     kapi.Auth.createLoginButton({
-      container: "#kakao-login-btn",
-      scope: "profile_nickname, profile_image, account_email",
+      container: LOGIN_BTN.CONTAINER,
+      scope: LOGIN_BTN.SCOPE,
       success: responseKakao,
       fail: () => {
         setError(LOGIN_TEXT.LOGIN_FAILED);
@@ -36,13 +34,13 @@ function Login({ setFiles }) {
 
     function responseKakao() {
       kapi.API.request({
-        url: VERIFY_USERINFO_URL,
+        url: LOGIN_URL.VERIFY_USERINFO,
         success: async (res) => {
           const kakaoAccount = res.kakao_account;
 
           if (kakaoAccount.email_needs_agreement) {
             kapi.API.request({
-              url: REVOKE_AUTH_URL,
+              url: LOGIN_URL.REVOKE_AUTH,
             });
             setError(LOGIN_TEXT.REQUEST_ACCEPT_ALL);
             return;
@@ -68,7 +66,7 @@ function Login({ setFiles }) {
             setFiles(files);
             navigate(from, { replace: true });
           } catch (error) {
-            navigate("error");
+            navigate("/error");
           }
         },
       });

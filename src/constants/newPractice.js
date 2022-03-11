@@ -45,13 +45,33 @@ export const SELECTIONS = {
 
 export const NOTES = [
   {
+    note: "A",
+    frequency: 55.0,
+    octave: 1,
+  },
+  {
+    note: "B",
+    frequency: 61.7,
+    octave: 1,
+  },
+  {
+    note: "C",
+    frequency: 65.4,
+    octave: 2,
+  },
+  {
+    note: "D",
+    frequency: 73.4,
+    octave: 2,
+  },
+  {
     note: "E",
-    frequency: 82.41,
+    frequency: 82.4,
     octave: 2,
   },
   {
     note: "F",
-    frequency: 87.31,
+    frequency: 87.3,
     octave: 2,
   },
   {
@@ -140,3 +160,8 @@ export const NOTES = [
     octave: 4,
   },
 ];
+
+export const NOTE_VALIDATION = {
+  MIN: 55.0,
+  MAX: 493.9,
+};

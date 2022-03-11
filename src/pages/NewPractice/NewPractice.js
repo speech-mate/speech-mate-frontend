@@ -8,9 +8,8 @@ import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
 import StepFour from "./StepFour";
 
-import { STEP } from "../../constants/newPractice";
 import { NewPracticeLayout } from "./NewPracticeStyles";
-import useMic from "../../hooks/useMic";
+import { STEP } from "../../constants/newPractice";
 
 function NewPractice({
   recorderState,
@@ -19,32 +18,35 @@ function NewPractice({
   speechHandlers,
 }) {
   const [step, setStep] = useState(STEP.ONE);
-  const { micState, ...micHandlers } = useMic();
   const navigate = useNavigate();
 
-  function toMainPage() {
-    navigate("/");
-  }
-
   function toPrevStep() {
+    if (step === STEP.ONE) {
+      speechHandlers.clearSpeech();
+      return navigate("/");
+    }
+
     if (step === STEP.TWO) {
-      if (micState.initMic) {
-        micHandlers.cancelMic();
-      }
-      setStep(STEP.ONE);
+      return setStep(STEP.ONE);
     }
 
     if (step === STEP.THREE) {
-      setStep(STEP.TWO);
+      recorderHandlers.setMaxRecordingTime(0, 0);
+      speechHandlers.setSpeechState((prev) => {
+        return {
+          ...prev,
+          title: "",
+          subThemes: [],
+        };
+      });
+      return setStep(STEP.TWO);
     }
 
-    if (step === STEP.FOUR) {
-      if (recorderState.initRecording) {
-        // recorderHandlers.saveRecording();
-        recorderHandlers.cancelRecording();
-      }
-      setStep(STEP.THREE);
+    if (recorderState.initRecording) {
+      recorderHandlers.cancelRecording();
     }
+
+    return setStep(STEP.THREE);
   }
 
   function toNextStep(e) {
@@ -61,36 +63,31 @@ function NewPractice({
           },
         };
       });
-      setStep(STEP.TWO);
+      return setStep(STEP.TWO);
     }
 
     if (step === STEP.TWO) {
-      setStep(STEP.THREE);
+      return setStep(STEP.THREE);
     }
 
-    if (step === STEP.THREE) {
-      setStep(STEP.FOUR);
-    }
+    return setStep(STEP.FOUR);
   }
 
   return (
     <NewPracticeLayout>
-      <NavBar onReturnBtnClick={step === STEP.ONE ? toMainPage : toPrevStep} />
+      <NavBar onReturnBtnClick={toPrevStep} />
       {step === STEP.ONE && <StepOne toNextStep={toNextStep} />}
       {step === STEP.TWO && (
         <StepTwo
           toNextStep={toNextStep}
           speechState={speechState}
           speechHandlers={speechHandlers}
-          micState={micState}
-          micHandlers={micHandlers}
         />
       )}
       {step === STEP.THREE && (
         <StepThree
           speechState={speechState}
           speechHandlers={speechHandlers}
-          // setStep={setStep}
           recorderState={recorderState}
           recorderHandlers={recorderHandlers}
           toNextStep={toNextStep}
