@@ -27,6 +27,7 @@ function StepFour({
   const [onAnalyse, setOnAnalyse] = useState(false);
   const [pitchStatus, setPitchStatus] = useState({});
   const [currentNote, setCurrentNote] = useState(null);
+  const [throttle, setThrottle] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -48,25 +49,6 @@ function StepFour({
     analyserNode.getFloatTimeDomainData(buffer);
     const fundamentalFrequency = autoCorrelate(buffer, audioCtx.sampleRate);
     if (!fundamentalFrequency || fundamentalFrequency > 500) return;
-    // const note = findClosestNote(fundamentalFrequency);
-
-    // if (note && !pitchStatus[note.frequency]) {
-    //   setPitchStatus((prev) => {
-    //     return {
-    //       ...prev,
-    //       [note.frequency]: 1,
-    //     };
-    //   });
-    // }
-
-    // if (note && pitchStatus[note.frequency]) {
-    //   setPitchStatus((prev) => {
-    //     return {
-    //       ...prev,
-    //       [note.frequency]: prev[note.frequency] + 1,
-    //     };
-    //   });
-    // }
 
     const currentNote = findNoteInRange(
       fundamentalFrequency,
@@ -91,10 +73,14 @@ function StepFour({
       });
     }
 
-    setCurrentNote(currentNote.note);
+    if (throttle) {
+      setCurrentNote(currentNote.note);
+      setThrottle(false);
+    }
   }
 
   useInterval(recordPitch, onAnalyse ? 1 : null);
+  useInterval(() => setThrottle(true), onAnalyse ? 200 : null);
 
   useEffect(() => {
     if (
@@ -213,9 +199,17 @@ function StepFour({
               setOnAnalyse(true);
               recorderHandlers.resumeRecording();
             }}
+            disabled={
+              recorderState.recordingMin === recorderState.maxRecordingMin &&
+              recorderState.recordingSec === recorderState.maxRecordingSec
+            }
           />
         )}
-        <ButtonLarge text="종료 및 리뷰하기" onClick={toReview} />
+        <ButtonLarge
+          text="종료 및 리뷰하기"
+          onClick={toReview}
+          disabled={onAnalyse}
+        />
       </ButtonBox>
     </StepFourBox>
   );

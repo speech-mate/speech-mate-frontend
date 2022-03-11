@@ -5,33 +5,50 @@ import ButtonLarge from "../../components/Button/ButtonLarge";
 import Logo from "../../components/Logo/Logo";
 import Indicator from "../../components/Indicator/Indicator";
 
-import { TEXT_CONTENTS, SELECTIONS } from "../../constants/newPractice";
-import { StepTwoBox, LogoBox, IndicatorBox } from "./NewPracticeStyles";
-import { getAudioContext, getAnalyser } from "../../handlers/audioCtxControls";
+import useMic from "../../hooks/useMic";
 import useInterval from "../../hooks/useInterval";
 import autoCorrelate from "../../util/autoCorrelate";
+import {
+  StepTwoBox,
+  LogoBox,
+  IndicatorBox,
+  FrequencyBox,
+} from "./NewPracticeStyles";
+import {
+  TEXT_CONTENTS,
+  SELECTIONS,
+  NOTE_VALIDATION,
+} from "../../constants/newPractice";
+import { getAudioContext, getAnalyser } from "../../handlers/audioCtxControls";
 import { findClosestNote, getNoteRange } from "../../util/helpers";
 
-function StepTwo({
-  onStepTwoSelection,
-  speechHandlers,
-  micState,
-  micHandlers,
-}) {
+const audioCtx = getAudioContext();
+const analyserNode = getAnalyser();
+const bufferLength = 2048;
+const buffer = new Float32Array(bufferLength);
+
+function StepTwo({ toNextStep, speechHandlers }) {
   const [source, setSource] = useState(null);
   const [pitchStatus, setPitchStatus] = useState({});
+  const [throttle, setThrottle] = useState(false);
+  const [currentFF, setCurrentFF] = useState();
+  const { micState, ...micHandlers } = useMic();
 
-  const audioCtx = getAudioContext();
-  const analyserNode = getAnalyser();
-  const bufferLength = 2048;
-  const buffer = new Float32Array(bufferLength);
-
-  function recordPitch() {
+  function getPitch() {
     analyserNode.getFloatTimeDomainData(buffer);
     const fundamentalFrequency = autoCorrelate(buffer, audioCtx.sampleRate);
-    if (!fundamentalFrequency) return;
+    if (
+      !fundamentalFrequency ||
+      fundamentalFrequency < NOTE_VALIDATION.MIN ||
+      fundamentalFrequency > NOTE_VALIDATION.MAX
+    )
+      return;
 
     const note = findClosestNote(fundamentalFrequency);
+    if (throttle) {
+      setCurrentFF(fundamentalFrequency.toFixed(2));
+      setThrottle(false);
+    }
 
     if (note && !pitchStatus[note.frequency]) {
       setPitchStatus((prev) => {
@@ -52,14 +69,16 @@ function StepTwo({
     }
   }
 
-  useInterval(recordPitch, micState.initMic ? 1 : null);
+  useInterval(getPitch, micState.initMic ? 1 : null);
+  useInterval(() => setThrottle(true), micState.initMic ? 300 : null);
 
   useEffect(() => {
-    if (micState.count !== 0 || !Object.keys(pitchStatus).length) return;
+    if (micState.initMic || !Object.keys(pitchStatus).length) return;
 
     const noteRange = getNoteRange(pitchStatus);
     console.log(noteRange);
 
+    setCurrentFF(noteRange[2].frequency);
     speechHandlers.setSpeechState((prev) => {
       return {
         ...prev,
@@ -67,7 +86,7 @@ function StepTwo({
         noteRange,
       };
     });
-  }, [micState.count]);
+  }, [micState.initMic]);
 
   useEffect(() => {
     if (!source) return;
@@ -89,9 +108,14 @@ function StepTwo({
     setSource(audioCtx.createMediaStreamSource(micState.mediaStream));
   }, [micState.mediaStream]);
 
+  useEffect(() => {
+    return () => micHandlers.cancelMic();
+  }, []);
+
   return (
     <StepTwoBox>
       <p>{TEXT_CONTENTS.TWO.INSTRUCTION}</p>
+      {currentFF && <FrequencyBox>{currentFF} Hz</FrequencyBox>}
       <LogoBox>
         <Logo />
       </LogoBox>
@@ -108,14 +132,14 @@ function StepTwo({
           disabled={micState.initMic}
         />
       ) : (
-        <ButtonLarge text={SELECTIONS.TWO[1]} onClick={onStepTwoSelection} />
+        <ButtonLarge text={SELECTIONS.TWO[1]} onClick={toNextStep} />
       )}
     </StepTwoBox>
   );
 }
 
 StepTwo.propTypes = {
-  onStepTwoSelection: propTypes.func,
+  toNextStep: propTypes.func,
   speechState: propTypes.object,
   speechHandlers: propTypes.object,
   micState: propTypes.object,

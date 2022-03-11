@@ -12,7 +12,9 @@ export async function userLogin(kakaoAccount) {
     LOGIN_URL,
     { email, nickname, photo },
     {
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+      },
       withCredentials: true,
     },
   );

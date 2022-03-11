@@ -5,6 +5,11 @@ export const NewPracticeLayout = styled.div`
   flex-direction: column;
   width: 100%;
   height: inherit;
+
+  button:disabled {
+    background-color: var(--ice-grey-color);
+    color: var(--dark-grey-blue-color);
+  }
 `;
 
 export const StepOneBox = styled.div`
@@ -71,11 +76,13 @@ export const StepTwoBox = styled.div`
     position: relative;
     top: 31.8%;
   }
+`;
 
-  button:disabled {
-    background-color: var(--ice-grey-color);
-    color: var(--dark-grey-blue-color);
-  }
+export const FrequencyBox = styled.div`
+  position: absolute;
+  font-size: 27px;
+  font-weight: 600;
+  top: 25%;
 `;
 
 export const LogoBox = styled.div`
@@ -118,6 +125,10 @@ export const StepThreeBox = styled.div`
   button {
     position: absolute;
     bottom: 11%;
+  }
+
+  input:focus {
+    outline: none;
   }
 `;
 
@@ -191,6 +202,8 @@ export const SubThemeList = styled.ul`
   }
 
   li {
+    display: flex;
+    justify-content: center;
     width: 100%;
     border-bottom: 1px solid white;
     margin-top: 25px;
@@ -202,12 +215,16 @@ export const SubThemeList = styled.ul`
       text-align: center;
 
       &:nth-child(1) {
-        width: 30%;
+        width: 25%;
       }
 
       &:nth-child(2) {
-        width: 70%;
+        width: 65%;
       }
+    }
+
+    i {
+      font-size: 20px;
     }
   }
 `;

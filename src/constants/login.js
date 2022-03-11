@@ -3,3 +3,13 @@ export const LOGIN_TEXT = {
   REQUEST_ACCEPT_ALL:
     "서비스 이용을 위하여 필수정보와 선택정보인 이메일을 모두 동의 해주세요.",
 };
+
+export const LOGIN_URL = {
+  VERIFY_USERINFO: "/v2/user/me",
+  REVOKE_AUTH: "/v1/user/unlink",
+};
+
+export const LOGIN_BTN = {
+  CONTAINER: "#kakao-login-btn",
+  SCOPE: "profile_nickname, profile_image, account_email",
+};

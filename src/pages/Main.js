@@ -10,8 +10,8 @@ import useLogout from "../hooks/useLogout";
 
 function Main() {
   const { auth } = useAuth();
-  const navigate = useNavigate();
   const logout = useLogout();
+  const navigate = useNavigate();
 
   function totNewPractice() {
     navigate("/practice/new");

@@ -114,12 +114,24 @@ function useRecorder() {
   return {
     recorderState,
     startRecording: () => startRecording(setRecorderState),
-    cancelRecording: () => setRecorderState(initialState),
-    saveRecording: () => saveRecording(recorderState.mediaRecorder),
+    saveRecording: () => {
+      saveRecording(recorderState.mediaRecorder);
+      setRecorderState((prev) => {
+        return { ...prev, initRecording: false };
+      });
+    },
     pauseRecording: () => pauseRecodring(recorderState.mediaRecorder),
     resumeRecording: () => resumeRecodring(recorderState.mediaRecorder),
     setMaxRecordingTime: (min, sec) =>
       setMaxRecordingTime(setRecorderState, min, sec),
+    cancelRecording: () => {
+      if (recorderState.mediaRecorder) {
+        recorderState.mediaRecorder.stream
+          .getAudioTracks()
+          .forEach((track) => track.stop());
+      }
+      setRecorderState(initialState);
+    },
   };
 }
 

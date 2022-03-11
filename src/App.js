@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import Layout from "./components/Layout";
-import RequireAuth from "./components/RequireAuth";
-import { AuthProvider } from "./context/AuthProvider";
 import Error from "./pages/Error";
 import Login from "./pages/Login";
 import Main from "./pages/Main";
 import NewPractice from "./pages/NewPractice/NewPractice";
 import Review from "./pages/Review/Review";
 import Files from "./pages/Files/Files";
+import Layout from "./components/Layout";
+import RequireAuth from "./components/RequireAuth";
+import PersistLogin from "./components/PersistLogin";
+import { AuthProvider } from "./context/AuthProvider";
 
 import useRecorder from "./hooks/useRecorder";
 import useSpeechState from "./hooks/useSpeechState";
-import PersistLogin from "./components/PersistLogin";
 
 function App() {
   const [files, setFiles] = useState([]);

@@ -40,6 +40,8 @@ function Review({
   const { title, speechTone, subThemes, url, fileId } = speechState;
 
   useEffect(() => {
+    if (!speechState.pitchStatus) return;
+
     const [dominantNote] = Object.entries(speechState.pitchStatus)
       .sort((a, b) => a[1] - b[1])
       .pop();
@@ -99,6 +101,8 @@ function Review({
       return;
     }
 
+    speechHandlers.clearSpeech();
+    recorderHandlers.cancelRecording();
     navigate(from);
   }
 
@@ -108,13 +112,24 @@ function Review({
       type: "audio/wav",
     });
 
+    const newSubThemes = speechState.subThemes.map((el) => {
+      if (checkedInputs.includes(el.text)) {
+        return {
+          ...el,
+          isAchieved: true,
+        };
+      }
+
+      return el;
+    });
+
     const formData = new FormData();
     formData.append("file", audioFile);
     formData.append("min", recorderState.recordingMin);
     formData.append("sec", recorderState.recordingSec);
     formData.append("title", speechState.title);
     formData.append("frequency", JSON.stringify(speechState.pitchStatus));
-    formData.append("subThemes", JSON.stringify(speechState.subThemes));
+    formData.append("subThemes", JSON.stringify(newSubThemes));
     formData.append("userPitch", JSON.stringify(speechState.userPitch));
     formData.append("selectedTone", JSON.stringify(speechState.speechTone));
 
@@ -134,6 +149,8 @@ function Review({
     });
 
     const result = await updateFile({ axios, id, newSubThemes, fileId });
+    speechHandlers.clearSpeech();
+    recorderHandlers.cancelRecording();
     setFiles(sortFiles(result.data.files));
     setIsModified(false);
     navigate("/practice/files");
@@ -155,8 +172,8 @@ function Review({
           onClick={tipModalOpen}
         />
       </TipButtonBox>
-      <h2>{speechTone.text}</h2>
-      <Keyboard selectedNote={speechTone.note} currentNote={dominantNote} />
+      <h2>{speechTone?.text}</h2>
+      <Keyboard selectedNote={speechTone?.note} currentNote={dominantNote} />
       <audio controls src={recorderState.audio ? recorderState.audio : url} />
       {!!subThemes.length && (
         <>

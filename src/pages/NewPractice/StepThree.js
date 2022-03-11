@@ -13,7 +13,6 @@ import {
   SubThemeBox,
   SubThemeList,
 } from "./NewPracticeStyles";
-import { STEP } from "../../constants/newPractice";
 import { convertToSec, formatMin, formatSec } from "../../util/formatTime";
 
 const initialValidationState = {
@@ -28,9 +27,9 @@ const initialValidationState = {
 };
 
 function StepThree({
+  toNextStep,
   speechState,
   speechHandlers,
-  setStep,
   recorderState,
   recorderHandlers,
 }) {
@@ -76,7 +75,8 @@ function StepThree({
           title: speechThemeRef.current.value,
         };
       });
-      setStep(STEP.FOUR);
+
+      toNextStep();
     }
   }
 
@@ -170,6 +170,16 @@ function StepThree({
     subThemeTextRef.current.value = "";
   }
 
+  function filterSubThemes(subTheme) {
+    console.log(subTheme.text);
+    speechHandlers.setSpeechState((prev) => {
+      return {
+        ...prev,
+        subThemes: prev.subThemes.filter((el) => el.text !== subTheme.text),
+      };
+    });
+  }
+
   return (
     <StepThreeBox>
       <label>
@@ -257,6 +267,10 @@ function StepThree({
                   subTheme.sec,
                 )}초`}</span>
                 <span>{subTheme.text}</span>
+                <i
+                  className="fa-solid fa-trash-can"
+                  onClick={() => filterSubThemes(subTheme)}
+                ></i>
               </li>
             );
           })}
@@ -270,7 +284,7 @@ function StepThree({
 StepThree.propTypes = {
   speechState: propTypes.object,
   speechHandlers: propTypes.object,
-  setStep: propTypes.func,
+  toNextStep: propTypes.func,
   recorderState: propTypes.object,
   recorderHandlers: propTypes.object,
 };
