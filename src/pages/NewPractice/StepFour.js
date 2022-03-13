@@ -94,7 +94,6 @@ function StepFour({
 
   useEffect(() => {
     if (onAnalyse || !Object.keys(pitchStatus).length) return;
-    console.log(pitchStatus);
 
     speechHandlers.setSpeechState((prev) => {
       return { ...prev, pitchStatus };

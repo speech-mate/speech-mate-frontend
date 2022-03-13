@@ -1,13 +1,14 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import propTypes from "prop-types";
 
 import Logo from "../components/Logo/Logo";
 import ButtonLarge from "../components/Button/ButtonLarge";
 
-function Error({ error }) {
+function Error() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { error } = location.state;
 
   return (
     <ErrorLayout>
@@ -19,11 +20,7 @@ function Error({ error }) {
             font: "30px",
             weight: "normal",
           }}
-          text={
-            error
-              ? `${error.code} ${error.message}`
-              : "⚠️ Error.. Please Try Later"
-          }
+          text={error ? `${error.code} ${error.message}` : "404 Not Found"}
         />
       </LogoBox>
       <ButtonLarge
@@ -53,9 +50,5 @@ const LogoBox = styled.div`
   position: relative;
   top: 25%;
 `;
-
-Error.propTypes = {
-  error: propTypes.object,
-};
 
 export default Error;

@@ -20,6 +20,10 @@ const SmallButton = styled.button`
   font-size: 16px;
 `;
 
+SmallButton.defaultProps = {
+  size: { width: "200px", height: "50px" },
+};
+
 ButtonSmall.propTypes = {
   size: propTypes.object,
   text: propTypes.string,
