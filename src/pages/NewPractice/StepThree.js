@@ -171,7 +171,6 @@ function StepThree({
   }
 
   function filterSubThemes(subTheme) {
-    console.log(subTheme.text);
     speechHandlers.setSpeechState((prev) => {
       return {
         ...prev,

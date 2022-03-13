@@ -31,7 +31,7 @@ function Main() {
         <i className="fa-solid fa-right-from-bracket" onClick={logout}></i>
       </MainHeader>
       <ProfileBox>
-        <img src={auth.user.photo} />
+        <img src={auth.user.photo} alt="user-profile-photo" />
         <h2>{`${auth.user.nickname}님 안녕하세요!`}</h2>
       </ProfileBox>
       <ButtonBox>

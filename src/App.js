@@ -66,10 +66,7 @@ function App() {
             </Route>
           </Route>
           <Route path="/error" element={<Error />} />
-          <Route
-            path="*"
-            element={<Error error={{ code: 404, message: "Page Not Found" }} />}
-          />
+          <Route path="*" element={<Error />} />
         </Route>
       </Routes>
     </AuthProvider>

@@ -1,5 +1,5 @@
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let analyser = audioCtx.createAnalyser();
+const analyser = audioCtx.createAnalyser();
 analyser.fftSize = 2048;
 
 export function getAudioContext() {

@@ -133,10 +133,16 @@ function Review({
     formData.append("userPitch", JSON.stringify(speechState.userPitch));
     formData.append("selectedTone", JSON.stringify(speechState.speechTone));
 
-    const result = await createFile({ axios, id, formData });
-    setFiles(sortFiles(result.data.files));
-    setIsSaved(true);
-    navigate("/practice/files");
+    try {
+      const result = await createFile({ axios, id, formData });
+      setFiles(sortFiles(result.data.files));
+      setIsSaved(true);
+      navigate("/practice/files");
+    } catch {
+      navigate("/error", {
+        state: { error: { code: 500, message: "Internal Server Error" } },
+      });
+    }
   }
 
   async function updateSubTheme() {
@@ -148,12 +154,18 @@ function Review({
       };
     });
 
-    const result = await updateFile({ axios, id, newSubThemes, fileId });
-    speechHandlers.clearSpeech();
-    recorderHandlers.cancelRecording();
-    setFiles(sortFiles(result.data.files));
-    setIsModified(false);
-    navigate("/practice/files");
+    try {
+      const result = await updateFile({ axios, id, newSubThemes, fileId });
+      speechHandlers.clearSpeech();
+      recorderHandlers.cancelRecording();
+      setFiles(sortFiles(result.data.files));
+      setIsModified(false);
+      navigate("/practice/files");
+    } catch {
+      navigate("/error", {
+        state: { error: { code: 500, message: "Internal Server Error" } },
+      });
+    }
   }
 
   function tipModalOpen() {

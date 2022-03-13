@@ -21,9 +21,16 @@ function Files({ files, setFiles, speechHandlers }) {
     if (files.length) return;
 
     const id = auth.user.id;
-    const response = await getFiles({ axios, id });
 
-    setFiles(sortFiles(response.data.files));
+    try {
+      const response = await getFiles({ axios, id });
+
+      setFiles(sortFiles(response.data.files));
+    } catch {
+      navigate("/error", {
+        state: { error: { code: 500, message: "Internal Server Error" } },
+      });
+    }
   }, []);
 
   function onReturnBtnClick() {
@@ -34,9 +41,16 @@ function Files({ files, setFiles, speechHandlers }) {
     const id = auth.user.id;
     const filename = e.target.dataset.filename;
     const fileId = e.target.dataset.fileid;
-    const result = await deleteFile({ axios, id, filename, fileId });
 
-    setFiles(sortFiles(result.data.files));
+    try {
+      const result = await deleteFile({ axios, id, filename, fileId });
+
+      setFiles(sortFiles(result.data.files));
+    } catch {
+      navigate("/error", {
+        state: { error: { code: 500, message: "Internal Server Error" } },
+      });
+    }
   }
 
   function toReview(file) {

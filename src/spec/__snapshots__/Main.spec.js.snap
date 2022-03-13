@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Main /> matches snapshot 1`] = `
+<div>
+  <div
+    class="sc-dkPtRN KOyNE"
+  >
+    <header
+      class="sc-hKwDye gmnpXE"
+    >
+      <div
+        class="sc-eCImPb grigRU"
+      >
+        <div
+          class="sc-bdvvtL cayXoV"
+        >
+          <img
+            alt="스피치 메이트 로고"
+            src="/images/logo.png"
+          />
+          <span />
+        </div>
+        <h1>
+          Speech Mate
+        </h1>
+      </div>
+      <i
+        class="fa-solid fa-right-from-bracket"
+      />
+    </header>
+    <div
+      class="sc-jRQBWg bWFtXU"
+    >
+      <img
+        alt="user-profile-photo"
+        src="test-user-photo"
+      />
+      <h2>
+        test user님 안녕하세요!
+      </h2>
+    </div>
+    <div
+      class="sc-gKclnd bMqTTI"
+    >
+      <button
+        class="sc-gsDKAQ eQfKER"
+      >
+        스피치 연습 시작하기
+      </button>
+      <button
+        class="sc-gsDKAQ eQfKER"
+      >
+        저장된 연습 보러가기
+      </button>
+    </div>
+  </div>
+</div>
+`;
