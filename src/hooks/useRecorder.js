@@ -88,8 +88,10 @@ function useRecorder() {
     };
 
     recorder.onstop = () => {
-      const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+      const blob = new Blob(chunks, { type: "audio/webm;codecs=opus" });
       chunks = [];
+
+      console.log(blob);
 
       setIsRecOn(false);
       setRecorderState((prev) => {
@@ -113,13 +115,8 @@ function useRecorder() {
 
   return {
     recorderState,
+    resetRecording: () => setRecorderState(initialState),
     startRecording: () => startRecording(setRecorderState),
-    saveRecording: () => {
-      saveRecording(recorderState.mediaRecorder);
-      setRecorderState((prev) => {
-        return { ...prev, initRecording: false };
-      });
-    },
     pauseRecording: () => pauseRecodring(recorderState.mediaRecorder),
     resumeRecording: () => resumeRecodring(recorderState.mediaRecorder),
     setMaxRecordingTime: (min, sec) =>
@@ -130,7 +127,12 @@ function useRecorder() {
           .getAudioTracks()
           .forEach((track) => track.stop());
       }
-      setRecorderState(initialState);
+    },
+    saveRecording: () => {
+      saveRecording(recorderState.mediaRecorder);
+      setRecorderState((prev) => {
+        return { ...prev, initRecording: false };
+      });
     },
   };
 }

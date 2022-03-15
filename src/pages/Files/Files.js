@@ -11,7 +11,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { getFiles, deleteFile } from "../../api/files";
 import { sortFiles } from "../../util/sortFiles";
 
-function Files({ files, setFiles, speechHandlers }) {
+function Files({ files, setFiles, speechHandlers, recorderHandlers }) {
   const { auth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,6 +31,11 @@ function Files({ files, setFiles, speechHandlers }) {
         state: { error: { code: 500, message: "Internal Server Error" } },
       });
     }
+  }, []);
+
+  useEffect(() => {
+    speechHandlers.clearSpeech();
+    recorderHandlers.resetRecording();
   }, []);
 
   function onReturnBtnClick() {
@@ -198,8 +203,8 @@ const LeftSection = styled.div`
 Files.propTypes = {
   files: propTypes.array,
   setFiles: propTypes.func,
-  speechState: propTypes.object,
   speechHandlers: propTypes.object,
+  recorderHandlers: propTypes.object,
 };
 
 export default Files;

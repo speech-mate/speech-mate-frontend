@@ -32,6 +32,7 @@ function StepTwo({ toNextStep, speechHandlers }) {
   const [pitchStatus, setPitchStatus] = useState({});
   const [throttle, setThrottle] = useState(false);
   const [currentFF, setCurrentFF] = useState();
+  const [isReady, setIsReady] = useState(false);
   const { micState, ...micHandlers } = useMic();
 
   function getPitch() {
@@ -85,6 +86,7 @@ function StepTwo({ toNextStep, speechHandlers }) {
         noteRange,
       };
     });
+    setIsReady(true);
   }, [micState.initMic]);
 
   useEffect(() => {
@@ -131,7 +133,11 @@ function StepTwo({ toNextStep, speechHandlers }) {
           disabled={micState.initMic}
         />
       ) : (
-        <ButtonLarge text={SELECTIONS.TWO[1]} onClick={toNextStep} />
+        <ButtonLarge
+          text={SELECTIONS.TWO[1]}
+          onClick={toNextStep}
+          disabled={!isReady}
+        />
       )}
     </StepTwoBox>
   );
@@ -139,10 +145,7 @@ function StepTwo({ toNextStep, speechHandlers }) {
 
 StepTwo.propTypes = {
   toNextStep: propTypes.func,
-  speechState: propTypes.object,
   speechHandlers: propTypes.object,
-  micState: propTypes.object,
-  micHandlers: propTypes.object,
 };
 
 export default StepTwo;
