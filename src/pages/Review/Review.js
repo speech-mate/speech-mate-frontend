@@ -34,6 +34,16 @@ function Review({ setFiles, recorderState, speechState }) {
   const { title, speechTone, subThemes, url, fileId } = speechState;
 
   useEffect(() => {
+    if (!recorderState.audio && !url) return;
+
+    const source = document.createElement("source");
+
+    source.src = recorderState.audio ? recorderState.audio : url;
+    source.type = "audio/webm";
+    document.querySelector("#audio").appendChild(source);
+  }, [recorderState.audio, url]);
+
+  useEffect(() => {
     if (!speechState.pitchStatus) return;
 
     const [dominantNote] = Object.entries(speechState.pitchStatus)
@@ -175,7 +185,7 @@ function Review({ setFiles, recorderState, speechState }) {
       </TipButtonBox>
       <h2>{speechTone?.text}</h2>
       <Keyboard selectedNote={speechTone?.note} currentNote={dominantNote} />
-      <audio controls src={recorderState.audio ? recorderState.audio : url} />
+      <audio id="audio" controls></audio>
       {!!subThemes.length && (
         <>
           <span>

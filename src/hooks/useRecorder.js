@@ -91,8 +91,6 @@ function useRecorder() {
       const blob = new Blob(chunks, { type: "audio/webm;codecs=opus" });
       chunks = [];
 
-      console.log(blob);
-
       setIsRecOn(false);
       setRecorderState((prev) => {
         if (prev.mediaRecorder) {
