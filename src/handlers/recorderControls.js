@@ -6,6 +6,7 @@ export async function startRecording(setRecorderState) {
       noiseSuppression: false,
       latency: 0,
     },
+    video: false,
   });
 
   setRecorderState((prev) => {

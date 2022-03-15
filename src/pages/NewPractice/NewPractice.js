@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import propTypes from "prop-types";
 
@@ -19,6 +19,13 @@ function NewPractice({
 }) {
   const [step, setStep] = useState(STEP.ONE);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (step !== STEP.ONE) return;
+
+    recorderHandlers.resetRecording();
+    speechHandlers.clearSpeech();
+  }, [step]);
 
   function toPrevStep() {
     if (step === STEP.ONE) {

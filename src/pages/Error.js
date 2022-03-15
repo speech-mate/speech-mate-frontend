@@ -8,7 +8,7 @@ import ButtonLarge from "../components/Button/ButtonLarge";
 function Error() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { error } = location.state;
+  const error = location?.state?.error;
 
   return (
     <ErrorLayout>

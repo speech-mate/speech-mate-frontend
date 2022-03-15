@@ -46,9 +46,7 @@ function App() {
                     files={files}
                     setFiles={setFiles}
                     speechState={speechState}
-                    speechHandlers={speechHandlers}
                     recorderState={recorderState}
-                    recorderHandlers={recorderHandlers}
                   />
                 }
                 s
@@ -60,6 +58,7 @@ function App() {
                     files={files}
                     setFiles={setFiles}
                     speechHandlers={speechHandlers}
+                    recorderHandlers={recorderHandlers}
                   />
                 }
               />

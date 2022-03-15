@@ -17,13 +17,7 @@ import { CLOSING_TEXT, TIP_TEXT } from "../../constants/review";
 import { createFile, updateFile } from "../../api/files";
 import { sortFiles } from "../../util/sortFiles";
 
-function Review({
-  setFiles,
-  recorderState,
-  recorderHandlers,
-  speechState,
-  speechHandlers,
-}) {
+function Review({ setFiles, recorderState, speechState }) {
   const [onModal, setOnModal] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [dominantNote, setDominantNote] = useState(null);
@@ -90,7 +84,6 @@ function Review({
 
   function onReturnBtnClick() {
     if (from === "/practice/files") {
-      speechHandlers.clearSpeech();
       navigate(from);
       return;
     }
@@ -101,15 +94,13 @@ function Review({
       return;
     }
 
-    speechHandlers.clearSpeech();
-    recorderHandlers.cancelRecording();
     navigate(from);
   }
 
   async function saveFile() {
     const id = auth.user.id;
     const audioFile = new File([recorderState.blob], "test", {
-      type: "audio/wav",
+      type: "audio/webm",
     });
 
     const newSubThemes = speechState.subThemes.map((el) => {
@@ -156,8 +147,6 @@ function Review({
 
     try {
       const result = await updateFile({ axios, id, newSubThemes, fileId });
-      speechHandlers.clearSpeech();
-      recorderHandlers.cancelRecording();
       setFiles(sortFiles(result.data.files));
       setIsModified(false);
       navigate("/practice/files");
@@ -247,8 +236,6 @@ function Review({
                     size={{ width: "80px", height: "29px" }}
                     text="예"
                     onClick={() => {
-                      speechHandlers.clearSpeech();
-                      recorderHandlers.cancelRecording();
                       navigate(from ? from : "/");
                     }}
                   />
@@ -406,9 +393,7 @@ Review.propTypes = {
   files: propTypes.array,
   setFiles: propTypes.func,
   speechState: propTypes.object,
-  speechHandlers: propTypes.object,
   recorderState: propTypes.object,
-  recorderHandlers: propTypes.object,
 };
 
 export default Review;
