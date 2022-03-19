@@ -99,37 +99,28 @@ voice pitch detection 알고리즘을 적용한 음성 녹음 웹 앱
 
 <details>
 <summary>Pitch Detection 알고리즘에 ACF를 적용하기 까지</summary>
-  
-프로젝트 기획 관련하여 Pitch Detecting에 대한 리서치를 하던 중 Auto Correlation Function(이하 ACF)을 이용한 알고리즘이 보편적으로 쓰이고 있다는 사실을 알게 되었다.  [Web Audio API](https://developer.mozilla.org/ko/docs/Web/API/Web_Audio_API)의 [AnalyserNode](https://developer.mozilla.org/ko/docs/Web/API/AnalyserNode)와 그 메소드들을 잘 활용하면 주파수를 금방 알아낼 수 있을 것 같은데, 왜 이름도 어려운 저런 알고리즘을 따로 적용해서 주파수를 구하는 걸까? 라는 의문을 가진 채 리서치를 이어 나갔다. 단순 리서치 후, ACF가 Best Practice 인 것 같으니 해당 부분만 공부해서 적용 해보자 라는 생각이 먼저 들었다. 왜냐하면 개발 기간은 2주로 한정 되어 있었고, 알고리즘 구현 뿐만 아니라 그 알고리즘을 활용한 어플리케이션 전체를 혼자 만들어야 했기 때문에 시간 절약이 필요하다고 생각했기 때문이다.
 <br/>
-그러나 이내 생각을 고쳐먹게 되었다. Best Practice를 따라가면 개발이 조금 더 용이해지겠지만, 왜 그것이 널리 쓰이고 있는지 그 이유를 알지 못한채 쓴다면 의미있는 첫 개인 프로젝트가 단순한 카피물이 되는 것은 원하지 않았기 때문이다 . 실제로 바로 Auto Correlation Function에 대한 공부를 한다고 했더라도, 음성 신호와 그 파형에 대한 이해도가 매우 낮은 상태여서 결국에는 기본적인 공부부터 시작하며 난도가 낮은 Pitch Detecting 알고리즘 부터 훑어 나가지 않았을까 생각한다.
+프로젝트 기획 관련하여 Pitch Detecting에 대한 리서치를 하던 중 Auto Correlation Function(이하 ACF)을 이용한 알고리즘이 보편적으로 쓰이고 있다는 사실을 알게 되었습니다. 처음에는 Web Audio API와 그 메소드들을 잘 활용하면 간단하게 주파수를 산출해낼 수 있을 것 같았는데, 왜 이름도 어려운 알고리즘을 따로 적용해서 주파수를 구하는 걸까? 의문을 가지고 리서치를 이어 나갔습니다. 단순 리서치 후, ACF가 Best Practice 인 것 같으니 해당 부분만 공부해서 적용해보자는 생각이 먼저 들었습니다. 왜냐하면 2주라는 한정적인 개발 기간동안 알고리즘 구현 뿐만 아니라 그 알고리즘을 활용한 어플리케이션 전체를 혼자 만들어야 했기 때문에 시간 절약기 필요하다고 생각했기 때문입니다. 
 <br/>
-이번 프로젝트를 통틀어서 가장 새로운 것을 많이 알게된 분야가 바로 오디오 신호인 만큼 이 페이지에서는 어떤 순서로 오디오 신호를 이해해 나갔고, 어떠한 알고리즘들이 고려 되었으며, 왜 최종적으로 ACF가 채택 되었는지에 대한 과정을 정리해 보았다.
 <br/>
-
-### [0️⃣ 소리에 대한 기본적인 이해](https://nebula-cemetery-b32.notion.site/22ee3790bcc440139249d894f7b6a54a)
-
+그러나 이내 생각을 바꾸게 되었습니다. Best Practice를 따라가면 개발이 조금 더 용이해지겠지만, 왜 그것이 널리 쓰이고 있는지 그 이유를 알지 못한채 쓴다면 제가 가진 의문점은 영영 해소될 수 없다고 생각했기 떄문입니다. 프로젝트를 마무리하는 이 시점에서 돌이켜보면 바로 ACF에 대한 공부를 했다고 하더라도, 음성 신호와 그 데이터의 해석에 대한 이해도가 매우 낮은 상태였기 때문에 결국에는 지금과 같이 전체적으로 공부하며 프로젝트를 진행했을 것 같다는 생각이 듭니다.
 <br/>
-
-### [1️⃣ 브라우저가 소리를 인식하게 해보자](https://nebula-cemetery-b32.notion.site/3e3ee3ba678146018e86462cedd56e65)
-
+<br/>
+이번 프로젝트를 통틀어서 가장 새로운 것을 많이 알게된 분야가 바로 오디오 신호인 만큼 아래 글들은 제가 어떤 순서로 오디오 신호를 이해해 나갔고, 어떠한 알고리즘들이 고려 되었으며, 왜 최종적으로 ACF가 채택 되었는지에 대한 과정이 정리되어 있습니다.
+<br/>
 <br/>
 
-### [2️⃣ Web Audio API의 활용 방안](https://nebula-cemetery-b32.notion.site/Web-Audio-API-b2d4d5ca34ac498b859daec5fb73646d)
+#### [0️⃣ 소리에 대한 기본적인 이해](https://nebula-cemetery-b32.notion.site/22ee3790bcc440139249d894f7b6a54a)
 
-<br/>
+#### [1️⃣ 브라우저가 소리를 인식하게 해보자](https://nebula-cemetery-b32.notion.site/3e3ee3ba678146018e86462cedd56e65)
 
-### [3️⃣ Pitch Detection 알고리즘 구현 (1) - Zero Crossing](https://nebula-cemetery-b32.notion.site/Pitch-Detection-1-Zero-Crossing-f0a6356ecbbc4f14a3a6680af2721056)
+#### [2️⃣ Web Audio API의 활용 방안](https://nebula-cemetery-b32.notion.site/Web-Audio-API-b2d4d5ca34ac498b859daec5fb73646d)
 
-<br/>
+#### [3️⃣ Pitch Detection 알고리즘 구현 (1) - Zero Crossing](https://nebula-cemetery-b32.notion.site/Pitch-Detection-1-Zero-Crossing-f0a6356ecbbc4f14a3a6680af2721056)
 
-### [4️⃣ Pitch Detection 알고리즘 구현 (2) - Fast Fourier Transform](https://nebula-cemetery-b32.notion.site/Pitch-Detection-2-Fast-Fourier-Transform-0c48dd6ad3bb40e7afecfc961b130f9d)
+#### [4️⃣ Pitch Detection 알고리즘 구현 (2) - Fast Fourier Transform](https://nebula-cemetery-b32.notion.site/Pitch-Detection-2-Fast-Fourier-Transform-0c48dd6ad3bb40e7afecfc961b130f9d)
 
-<br/>
-
-### [5️⃣ Pitch Detection 알고리즘 구현 (3) - Auto Correlation Function](https://nebula-cemetery-b32.notion.site/Pitch-Detection-3-Auto-Correlation-Function-862a6748ca44428e89bb3a0e2c08a9ac)
-
-<br/>
+#### [5️⃣ Pitch Detection 알고리즘 구현 (3) - Auto Correlation Function](https://nebula-cemetery-b32.notion.site/Pitch-Detection-3-Auto-Correlation-Function-862a6748ca44428e89bb3a0e2c08a9ac)
 
 </details>
 
