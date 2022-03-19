@@ -1,16 +1,10 @@
 import { NOTES } from "../constants/newPractice";
 
-// Find the biggest value in a buffer, set that value to 1.0,
-// and scale every other value by the same amount.
 export function normalize(data) {
   const biggestVal = Math.abs(Math.max(...data));
   return data.map((val) => val / biggestVal);
 }
 
-// Calculate the fundamental frequency of a buffer
-// by finding the peaks, and counting the distance
-// between peaks in samples, and converting that
-// number of samples to a frequency value.
 export function findFrequency(autocorr, sampleRate) {
   const nSamples = autocorr.length;
   let valOfLargestPeakSoFar = 0;
@@ -30,8 +24,7 @@ export function findFrequency(autocorr, sampleRate) {
     }
   }
 
-  const distanceToNextLargestPeak = indexOfLargestPeakSoFar - 0;
-  const fundamentalFrequency = sampleRate / distanceToNextLargestPeak;
+  const fundamentalFrequency = sampleRate / indexOfLargestPeakSoFar;
 
   return fundamentalFrequency;
 }
