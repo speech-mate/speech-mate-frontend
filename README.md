@@ -1,4 +1,5 @@
 # SPEECH MATE - 프론트 앤드 파트
+
 voice pitch detection 알고리즘을 적용한 음성 녹음 웹 앱
 
 👄[Speech Mate Demo](https://speechmate.online)<br/>
@@ -6,13 +7,14 @@ voice pitch detection 알고리즘을 적용한 음성 녹음 웹 앱
 
 ## 스피치 메이트 소개
 
-플래시 카드에 키워드를 적어 한장 한장 넘기며 연습을 하는 제 오랜 습관에서 출발한 프로젝트입니다. 녹음과 플래시카드가 결합된 기능을 구현해 보고 싶었고, 입력되는 오디오 신호를 좀 더 적극적으로 활용할 수 있는 방법이 있을까 고민하다가 Web Audio API를 사용한 voice pitch 분석 기능을 추가하여 프로젝트를 기획하게 되었습니다. 
+플래시 카드에 키워드를 적어 한장 한장 넘기며 연습을 하는 제 오랜 습관에서 출발한 프로젝트입니다. 녹음과 플래시카드가 결합된 기능을 구현해 보고 싶었고, 입력되는 오디오 신호를 좀 더 적극적으로 활용할 수 있는 방법이 있을까 고민하다가 Web Audio API를 사용한 voice pitch 분석 기능을 추가하여 프로젝트를 기획하게 되었습니다.
 
 ## 개요
 
 ### ⏰작업기간
 
 2022년 02월 21일 ~ 2022년 03월 13일
+
 <details>
 <summary>세부 작업 내용</summary>
   
@@ -47,49 +49,90 @@ voice pitch detection 알고리즘을 적용한 음성 녹음 웹 앱
 
 ### Frontend : <img alt="React" src ="https://img.shields.io/badge/React-61DAFB.svg?&style=for-the-appveyor&logo=React&logoColor=white"/> , <img alt="styled-components" src ="https://img.shields.io/badge/styled_components-DB7093.svg?&style=for-the-appveyor&logo=styled-components&logoColor=white"/> , <img alt="axios" src ="https://img.shields.io/badge/axios-764ABC.svg?&style=for-the-appveyor&logo=axios&logoColor=white"/>
 
-
 ## 🛠주요기능
-|페이지|기능|설명|
-|:---:|:---:|:---:|
-|Login|사용자 동의|카카오 소셜 로그인을 사용하여 사용자의 개인 정보(이메일, 닉네임, 프로필) 사용에 대한 동의를 얻습니다.|
-|New Practice|스피치 목적 선택|스피치의 목적을 선택할 수 있고, 각 목적은 아래와 같이 특정 음계와 매핑되어 있습니다.<br/><li>도 : 위로, 힘든 일 말할 때</li><br/><li>레 : 회의, 보고제안, 권유</li><br/><li>미 : 일상 대화</li><br/><li>파 : 연설, 프레젠테이션 주장 강조</li><br/><li>솔 : 인사, 칭찬, 감사</li> |
-||사용자 기본 pitch 분석|사용자가 평상시 말하는 톤을 주파수로 변환하여 가장 가까운 음계의 주파수를 state에 저장합니다. 동시에 해당 음계의 앞, 뒤 2개의 노트와 함께 총 5개의 노트 또한 state에 저장합니다.|
-||스피치 세부사항 설정|스피치 시간, 주제, 소주제를 설정할 수 있습니다. 스피치 시간은 10분을 초과할 수 없으며, 소주제를 설정하기 위해서는 반드시 먼저 스피치 시간이 설정 되어야 합니다. 작성한 소주제는 삭제 할 수 있습니다.|
-||스피치 녹음|사용자는 녹음 중 실시간으로 분석된 pitch와 가장 가까운 음계를 확인할 수 있습니다. 스피치 목적에 맞는 톤의 경우에는 초록색, 그렇지 않는 경우에는 구분되어 건반에 표시됩니다. 녹음은 일시정지 재개 기능이 있으며, 설정한 시간보다 이전에 녹음을 종료할 수 있습니다. 또한 녹음중에는 세부사항에서 설정한 소주제가 있는 경우 설정 시간에 맞추어 소주제가 변경됩니다.|
-|Review|스피치 결과|스피치 결과 페이지에서는 스피치 목적 음계, 가장 많이 입력된 음계를 확인할 수 있고, 녹음된 음성을 다시 들을 수 있는 기능이 있습니다. 또한 음성을 들으며 설정한 소주제가 전부 커버되었는지 체크하는 기능이 있습니다. 우측 상단에 분석 결과 버튼을 누른 경우 voice pitch detecting 결과에 따라 10가지의 각기 다른 팁을 제공받을 수 있습니다. 원하는 음성 파일은 저장하여 다른 디바이스에서도 확인할 수 있습니다.|
-|Saved Practices|저장된 파일|Review 페이지에서 저장한 파일들이 리스트업 되어 있습니다. 각 파일을 클릭하게 되면 리뷰 페이지로 이동하게 됩니다. 더이상 리뷰가 필요 없는 파일은 삭제할 수 있습니다.|
 
+|     페이지      |          기능          |                                                                                                                                                                                                     설명                                                                                                                                                                                                      |
+| :-------------: | :--------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|      Login      |      사용자 동의       |                                                                                                                                                     카카오 소셜 로그인을 사용하여 사용자의 개인 정보(이메일, 닉네임, 프로필) 사용에 대한 동의를 얻습니다.                                                                                                                                                     |
+|  New Practice   |    스피치 목적 선택    |                                                               스피치의 목적을 선택할 수 있고, 각 목적은 아래와 같이 특정 음계와 매핑되어 있습니다.<br/><li>도 : 위로, 힘든 일 말할 때</li><br/><li>레 : 회의, 보고제안, 권유</li><br/><li>미 : 일상 대화</li><br/><li>파 : 연설, 프레젠테이션 주장 강조</li><br/><li>솔 : 인사, 칭찬, 감사</li>                                                               |
+|                 | 사용자 기본 pitch 분석 |                                                                                                               사용자가 평상시 말하는 톤을 주파수로 변환하여 가장 가까운 음계의 주파수를 state에 저장합니다. 동시에 해당 음계의 앞, 뒤 2개의 노트와 함께 총 5개의 노트 또한 state에 저장합니다.                                                                                                                |
+|                 |  스피치 세부사항 설정  |                                                                                                     스피치 시간, 주제, 소주제를 설정할 수 있습니다. 스피치 시간은 10분을 초과할 수 없으며, 소주제를 설정하기 위해서는 반드시 먼저 스피치 시간이 설정 되어야 합니다. 작성한 소주제는 삭제 할 수 있습니다.                                                                                                      |
+|                 |      스피치 녹음       |                       사용자는 녹음 중 실시간으로 분석된 pitch와 가장 가까운 음계를 확인할 수 있습니다. 스피치 목적에 맞는 톤의 경우에는 초록색, 그렇지 않는 경우에는 구분되어 건반에 표시됩니다. 녹음은 일시정지 재개 기능이 있으며, 설정한 시간보다 이전에 녹음을 종료할 수 있습니다. 또한 녹음중에는 세부사항에서 설정한 소주제가 있는 경우 설정 시간에 맞추어 소주제가 변경됩니다.                        |
+|     Review      |      스피치 결과       | 스피치 결과 페이지에서는 스피치 목적 음계, 가장 많이 입력된 음계를 확인할 수 있고, 녹음된 음성을 다시 들을 수 있는 기능이 있습니다. 또한 음성을 들으며 설정한 소주제가 전부 커버되었는지 체크하는 기능이 있습니다. 우측 상단에 분석 결과 버튼을 누른 경우 voice pitch detecting 결과에 따라 10가지의 각기 다른 팁을 제공받을 수 있습니다. 원하는 음성 파일은 저장하여 다른 디바이스에서도 확인할 수 있습니다. |
+| Saved Practices |      저장된 파일       |                                                                                                                      Review 페이지에서 저장한 파일들이 리스트업 되어 있습니다. 각 파일을 클릭하게 되면 리뷰 페이지로 이동하게 됩니다. 더이상 리뷰가 필요 없는 파일은 삭제할 수 있습니다.                                                                                                                      |
 
 <details>
 <summary>상세 화면 이미지</summary>
-  ### 로그인 
-  ![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/80205036/158477076-4f9ab86c-2b8f-4f4f-8436-3415dc763e28.gif)
-  <br/>
-  
-  ### 스피치 목적 선택 & 중간 pitch 분석
-  ![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/80205036/158477292-7b33934c-54f4-4ae5-b866-40ed39b95535.gif)
-  <br/>
-  
-  ### 스피치 상세 설정
-  ![ezgif com-gif-maker (3)](https://user-images.githubusercontent.com/80205036/158477610-08ab2636-731c-4862-90f1-50be73d060f6.gif)
+
+### 로그인
+
+![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/80205036/158477076-4f9ab86c-2b8f-4f4f-8436-3415dc763e28.gif)
 <br/>
-  
-  ### 스피치 녹음 시작
-  ![ezgif com-gif-maker (4)](https://user-images.githubusercontent.com/80205036/158477745-f5f12799-cf5c-4865-b477-bf25ce5bc63c.gif)
+
+### 스피치 목적 선택 & 중간 pitch 분석
+
+![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/80205036/158477292-7b33934c-54f4-4ae5-b866-40ed39b95535.gif)
 <br/>
-  
-  ### 스피치 녹음 종료
+
+### 스피치 상세 설정
+
+![ezgif com-gif-maker (3)](https://user-images.githubusercontent.com/80205036/158477610-08ab2636-731c-4862-90f1-50be73d060f6.gif)
+<br/>
+
+### 스피치 녹음 시작
+
+![ezgif com-gif-maker (4)](https://user-images.githubusercontent.com/80205036/158477745-f5f12799-cf5c-4865-b477-bf25ce5bc63c.gif)
+<br/>
+
+### 스피치 녹음 종료
+
 ![ezgif com-gif-maker (5)](https://user-images.githubusercontent.com/80205036/158477989-db32091c-0023-4726-9fe0-ec4a251eb640.gif)
 <br/>
-  
-  ### 스피치 리뷰 및 저장
-  ![ezgif com-gif-maker (6)](https://user-images.githubusercontent.com/80205036/158478175-5b1f7f1c-cd90-4497-a4e6-fd4c6c1900a9.gif)
 
+### 스피치 리뷰 및 저장
+
+![ezgif com-gif-maker (6)](https://user-images.githubusercontent.com/80205036/158478175-5b1f7f1c-cd90-4497-a4e6-fd4c6c1900a9.gif)
 
 </details>
 
-## 🚀 Issue Log
-TODO 1
+## 🚀 Challenges
+
+<details>
+<summary>Pitch Detection 알고리즘에 ACF를 적용하기 까지</summary>
+  
+프로젝트 기획 관련하여 Pitch Detecting에 대한 리서치를 하던 중 Auto Correlation Function(이하 ACF)을 이용한 알고리즘이 보편적으로 쓰이고 있다는 사실을 알게 되었다.  [Web Audio API](https://developer.mozilla.org/ko/docs/Web/API/Web_Audio_API)의 [AnalyserNode](https://developer.mozilla.org/ko/docs/Web/API/AnalyserNode)와 그 메소드들을 잘 활용하면 주파수를 금방 알아낼 수 있을 것 같은데, 왜 이름도 어려운 저런 알고리즘을 따로 적용해서 주파수를 구하는 걸까? 라는 의문을 가진 채 리서치를 이어 나갔다. 단순 리서치 후, ACF가 Best Practice 인 것 같으니 해당 부분만 공부해서 적용 해보자 라는 생각이 먼저 들었다. 왜냐하면 개발 기간은 2주로 한정 되어 있었고, 알고리즘 구현 뿐만 아니라 그 알고리즘을 활용한 어플리케이션 전체를 혼자 만들어야 했기 때문에 시간 절약이 필요하다고 생각했기 때문이다.
+<br/>
+그러나 이내 생각을 고쳐먹게 되었다. Best Practice를 따라가면 개발이 조금 더 용이해지겠지만, 왜 그것이 널리 쓰이고 있는지 그 이유를 알지 못한채 쓴다면 의미있는 첫 개인 프로젝트가 단순한 카피물이 되는 것은 원하지 않았기 때문이다 . 실제로 바로 Auto Correlation Function에 대한 공부를 한다고 했더라도, 음성 신호와 그 파형에 대한 이해도가 매우 낮은 상태여서 결국에는 기본적인 공부부터 시작하며 난도가 낮은 Pitch Detecting 알고리즘 부터 훑어 나가지 않았을까 생각한다.
+<br/>
+이번 프로젝트를 통틀어서 가장 새로운 것을 많이 알게된 분야가 바로 오디오 신호인 만큼 이 페이지에서는 어떤 순서로 오디오 신호를 이해해 나갔고, 어떠한 알고리즘들이 고려 되었으며, 왜 최종적으로 ACF가 채택 되었는지에 대한 과정을 정리해 보았다.
+<br/>
+
+### [0️⃣ 소리에 대한 기본적인 이해](https://nebula-cemetery-b32.notion.site/22ee3790bcc440139249d894f7b6a54a)
+
+<br/>
+
+### [1️⃣ 브라우저가 소리를 인식하게 해보자](https://nebula-cemetery-b32.notion.site/3e3ee3ba678146018e86462cedd56e65)
+
+<br/>
+
+### [2️⃣ Web Audio API의 활용 방안](https://nebula-cemetery-b32.notion.site/Web-Audio-API-b2d4d5ca34ac498b859daec5fb73646d)
+
+<br/>
+
+### [3️⃣ Pitch Detection 알고리즘 구현 (1) - Zero Crossing](https://nebula-cemetery-b32.notion.site/Pitch-Detection-1-Zero-Crossing-f0a6356ecbbc4f14a3a6680af2721056)
+
+<br/>
+
+### [4️⃣ Pitch Detection 알고리즘 구현 (2) - Fast Fourier Transform](https://nebula-cemetery-b32.notion.site/Pitch-Detection-2-Fast-Fourier-Transform-0c48dd6ad3bb40e7afecfc961b130f9d)
+
+<br/>
+
+### [5️⃣ Pitch Detection 알고리즘 구현 (3) - Auto Correlation Function](https://nebula-cemetery-b32.notion.site/Pitch-Detection-3-Auto-Correlation-Function-862a6748ca44428e89bb3a0e2c08a9ac)
+
+<br/>
+
+</details>
 
 ## 💬프로젝트를 마친 소감
+
 TODO 2
