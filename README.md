@@ -95,20 +95,31 @@ voice pitch detection 알고리즘을 적용한 음성 녹음 웹 앱
 
 </details>
 
+## 💻 Getting Started
+### 원격 저장소 내려받기
+```
+$ git clone https://github.com/speech-mate/speech-mate-frontend.git
+$ npm install
+```
+### 환경 변수 설정
+```
+REACT_APP_KAKAO_KEY="..."
+REACT_APP_BASE_URL=http://localhost:3001
+```
+### 실행
+```
+$ npm start
+```
+### 테스트
+```
+$ npm test
+```
+
 ## 🚀 Challenges
 
 <details>
-<summary>Pitch Detection 알고리즘에 ACF를 적용하기 까지</summary>
-<br/>
-프로젝트 기획 관련하여 Pitch Detecting에 대한 리서치를 하던 중 Auto Correlation Function(이하 ACF)을 이용한 알고리즘이 보편적으로 쓰이고 있다는 사실을 알게 되었습니다. 처음에는 Web Audio API와 그 메소드들을 잘 활용하면 간단하게 주파수를 산출해낼 수 있을 것 같았는데, 왜 이름도 어려운 알고리즘을 따로 적용해서 주파수를 구하는 걸까? 의문을 가지고 리서치를 이어 나갔습니다. 단순 리서치 후, ACF가 Best Practice 인 것 같으니 해당 부분만 공부해서 적용해보자는 생각이 먼저 들었습니다. 왜냐하면 2주라는 한정적인 개발 기간동안 알고리즘 구현 뿐만 아니라 그 알고리즘을 활용한 어플리케이션 전체를 혼자 만들어야 했기 때문에 시간 절약기 필요하다고 생각했기 때문입니다. 
-<br/>
-<br/>
-그러나 이내 생각을 바꾸게 되었습니다. Best Practice를 따라가면 개발이 조금 더 용이해지겠지만, 왜 그것이 널리 쓰이고 있는지 그 이유를 알지 못한채 쓴다면 제가 가진 의문점은 영영 해소될 수 없다고 생각했기 떄문입니다. 프로젝트를 마무리하는 이 시점에서 돌이켜보면 바로 ACF에 대한 공부를 했다고 하더라도, 음성 신호와 그 데이터의 해석에 대한 이해도가 매우 낮은 상태였기 때문에 결국에는 지금과 같이 전체적으로 공부하며 프로젝트를 진행했을 것 같다는 생각이 듭니다.
-<br/>
-<br/>
-이번 프로젝트를 통틀어서 가장 새로운 것을 많이 알게된 분야가 바로 오디오 신호인 만큼 아래 글들은 제가 어떤 순서로 오디오 신호를 이해해 나갔고, 어떠한 알고리즘들이 고려 되었으며, 왜 최종적으로 ACF가 채택 되었는지에 대한 과정이 정리되어 있습니다.
-<br/>
-<br/>
+<summary>라이브러리 의존성 없는 Pitch Detection 알고리즘 구현하기 (FE)</summary>
+  Pitch Detection 기능이 프로젝트의 메인 기능 중 하나이기 때문에 라이브러리를 쓰지 않는 기능 구현을 추구하였습니다. 라이브러리를 사용하지 않는 경우 라이브러리 업데이트와 같은 외부적 요인에서 벗어나 주체적인 코드의 유지보수 작업을 할 수 있다고 생각하였습니다. Pitch Detection 알고리즘에는 Web Audio API의 AnalyserNode로 추출한 시간 영역 데이터를 활용하였으며, Pitch Detection에 쓰이는 3가지 알고리즘을 비교 분석하여 최종적으로 Auto Correlation을 채택하게 되었습니다. Auto Correlation 구현으로 목소리와 같은 복잡한 파형의 주파수 계산을 할 수 있게 되었습니다.
 
 #### [0️⃣ 소리에 대한 기본적인 이해](https://nebula-cemetery-b32.notion.site/22ee3790bcc440139249d894f7b6a54a)
 
@@ -121,9 +132,14 @@ voice pitch detection 알고리즘을 적용한 음성 녹음 웹 앱
 #### [4️⃣ Pitch Detection 알고리즘 구현 (2) - Fast Fourier Transform](https://nebula-cemetery-b32.notion.site/Pitch-Detection-2-Fast-Fourier-Transform-0c48dd6ad3bb40e7afecfc961b130f9d)
 
 #### [5️⃣ Pitch Detection 알고리즘 구현 (3) - Auto Correlation Function](https://nebula-cemetery-b32.notion.site/Pitch-Detection-3-Auto-Correlation-Function-862a6748ca44428e89bb3a0e2c08a9ac)
-
 </details>
-
-## 💬프로젝트를 마친 소감
-
-TODO 2
+<details>
+<summary>목소리 피치 시각화 로직에 쓰로틀링 추가하기 (FE)</summary>
+프로젝트 초기에는 NewPractice 페이지의 2단계(사용자 베이스 목소리 주파수 추출), 4단계 (녹음 연습)에서 실시간으로 계산한 주파수를 매 번 State에 업데이트하여 사용자에게도 실시간 주파수 정보를 보여주는 로직으로 작성이 되어 있었습니다. 그러나 실제로 서비스를 배포하고 피드백을 수집하던 중, 목소리 피치 시각화 (2단계: Hz 정보, 4단계: 건반 색 표시) 변경이 잦은 느낌이 있다는 의견을 듣게 되었고, 이에 쓰로틀링을 적용하여 2단계 Hz 정보 렌더링의 경우 초당 270회에서 3.8회로 최적화 할 수 있었습니다. 
+  
+#### [예시 코드](https://nebula-cemetery-b32.notion.site/React-Throttle-0de98da0a72b4a5fa61d60ae82844025)
+</details>
+<details>
+<summary>녹음 파일을 서버에 전달, AWS S3에 업데이트 하기 (FE & BE)</summary>
+녹음 파일을 서버에 전송할 때, 파일 객체 뿐만 아니라 제목(String), 소주제(Array) 등 여러 데이터 타입의 정보를 함께 전송할 필요가 있었습니다. 이에 FormData 객체의 인코딩 타입을 multipart/form-data로 설정하고 문자열이 아닌 데이터들은 문자열로 변환하여 각기 다른 타입의 데이터가 서버로 전송될 수 있도록 구현하였습니다. 서버에서는 multer-s3를 사용하여 파일 데이터를 AWS S3에 업데이트하고 나머지 정보는 S3 버킷에 업데이트된 파일의 url과 함께 mongoDB에 저장될 수 있도록 구현하였습니다. DB에 url 정보가 있기 때문에 사용자가 디바이스를 변경하여도 동일한 아이디로 접속한다면 언제든지 해당 파일에 접근 가능하도록 구현하였습니다.
+</details>
