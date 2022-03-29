@@ -2,7 +2,7 @@
 
 voice pitch detection 알고리즘을 적용한 음성 녹음 웹 앱
 
-👄[Speech Mate Demo](https://speechmate.online)<br/>
+👄[Speech Mate Demo](https://www.speechmate.online)<br/>
 📚 [백엔드 Repository](https://github.com/speech-mate/speech-mate-backend)
 
 ## 스피치 메이트 소개
